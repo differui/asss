@@ -7,12 +7,24 @@ const rules: RULE[] = [
     token: TOKEN_TYPE.S,
   },
   {
+    re: '\\/\\*[^*]*\\*+([^/*][^*]*\\*+)*\\/',
+    token: TOKEN_TYPE.COMMENTS
+  },
+  {
+    re: RE.badcomment,
+    token: TOKEN_TYPE.BAD_COMMENTS
+  },
+  {
     re: '~=',
     token: TOKEN_TYPE.INCLUDES
   },
   {
-    re: '|=',
+    re: '\\|=',
     token: TOKEN_TYPE.DASHMATCH
+  },
+  {
+    re: RE.string,
+    token: TOKEN_TYPE.STRING
   },
   {
     re: RE.badstring,
