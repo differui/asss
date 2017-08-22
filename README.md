@@ -1,5 +1,5 @@
-# bcss
-> A toy implementation of simple CSS preprocessor.
+# ASSS
+> A toy CSS preprocessor implementation with SASS like grammar.
 
 ## Setup
 
