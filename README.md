@@ -1,7 +1,34 @@
 # SSSA
 > A toy CSS preprocessor implementation with SASS like grammar.
 
-## Setup
+## Usage
+
+**CLI**
+
+```bash
+npm i bcss -g
+
+# use
+bcss -c 'b {}'
+bcss --compile 'b { e {} }'
+bcss --help
+```
+
+**NodeJS**
+
+```js
+import compile from 'bcss';
+
+console.log(compile('b {}', {
+  // options
+}));
+```
+
+## Options
+
+| no options
+
+## Develop
 
 ```js
 # install deps
