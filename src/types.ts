@@ -40,13 +40,14 @@ export enum TOKEN_TYPE {
   DOT = 'DOT',
   ASTERISK = 'ASTERISK',
   REVERSE_SOLIDUS = 'REVERSE_SOLIDUS',
+  AMPERSAND = 'AMPERSAND',
+  CARET = 'CARET',
   UNKNOW = 'UNKNOW'
 };
 
 export enum NODE_TYPE {
-  ROOT = 'ROOT',
-  BLOCK = 'BLOCK',
-  ELEMENT = 'ELEMENT'
+  STYLESHEET = 'STYLESHEET',
+  RULE = 'RULE'
 };
 
 export interface TOKEN {
