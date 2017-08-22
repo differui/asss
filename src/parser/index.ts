@@ -10,44 +10,32 @@ export function parse(source: string): NODE {
 };
 
 export function stylesheet(): NODE {
-  const rootNode: NODE = makeNode(NODE_TYPE.ROOT);
+  const rootNode: NODE = makeNode(NODE_TYPE.STYLESHEET);
 
   eatWhiteSpace();
   while (test([ TOKEN_TYPE.IDENT, TOKEN_TYPE.HASH, TOKEN_TYPE.DOT, TOKEN_TYPE.LEFT_SQUARE_BRACE, TOKEN_TYPE.COLON ])) {
-    rootNode.children.push(blockRule());
+    rootNode.children.push(rule());
     eatWhiteSpace();
   }
   return rootNode;
 }
 
-export function blockRule(): NODE {
-  const rtn: NODE = makeNode(NODE_TYPE.BLOCK);
+export function rule(): NODE {
+  const rtn: NODE = makeNode(NODE_TYPE.RULE);
 
   rtn.selectors = selectors();
   match(TOKEN_TYPE.LEFT_CURLY_BRACE);
   eatWhiteSpace();
-  while (test([ TOKEN_TYPE.IDENT, TOKEN_TYPE.SEMICOLON, TOKEN_TYPE.DOT, TOKEN_TYPE.HASH, TOKEN_TYPE.LEFT_SQUARE_BRACE, TOKEN_TYPE.COLON ])) {
+  while (test([ TOKEN_TYPE.AMPERSAND, TOKEN_TYPE.CARET, TOKEN_TYPE.IDENT, TOKEN_TYPE.SEMICOLON, TOKEN_TYPE.DOT, TOKEN_TYPE.HASH, TOKEN_TYPE.LEFT_SQUARE_BRACE, TOKEN_TYPE.COLON ])) {
     const nextToken = peekNextNoWhiteSpaceToken();
 
     if ((test(TOKEN_TYPE.IDENT) && nextToken && nextToken.type === TOKEN_TYPE.COLON) || test(TOKEN_TYPE.SEMICOLON)) {
       rtn.declarations = rtn.declarations.concat(declarations());
     } else {
-      rtn.children.push(elementRule());
+      rtn.children.push(rule());
     }
   }
 
-  match(TOKEN_TYPE.RIGHT_CURLY_BRACE);
-  eatWhiteSpace();
-  return rtn;
-}
-
-export function elementRule(): NODE {
-  const rtn: NODE = makeNode(NODE_TYPE.ELEMENT);
-
-  rtn.selectors = selectors();
-  match(TOKEN_TYPE.LEFT_CURLY_BRACE);
-  eatWhiteSpace();
-  rtn.declarations = declarations();
   match(TOKEN_TYPE.RIGHT_CURLY_BRACE);
   eatWhiteSpace();
   return rtn;
@@ -74,10 +62,12 @@ export function selector(): string {
     rtn += selector();
   } else if (test(TOKEN_TYPE.S)) {
     match(TOKEN_TYPE.S);
-    if (test([ TOKEN_TYPE.PLUS, TOKEN_TYPE.GREATER_THAN, TOKEN_TYPE.IDENT, TOKEN_TYPE.ASTERISK, TOKEN_TYPE.HASH, TOKEN_TYPE.DOT, TOKEN_TYPE.LEFT_SQUARE_BRACE, TOKEN_TYPE.COLON ])) {
+    if (test([ TOKEN_TYPE.PLUS, TOKEN_TYPE.GREATER_THAN, TOKEN_TYPE.AMPERSAND, TOKEN_TYPE.CARET, TOKEN_TYPE.IDENT, TOKEN_TYPE.ASTERISK, TOKEN_TYPE.HASH, TOKEN_TYPE.DOT, TOKEN_TYPE.LEFT_SQUARE_BRACE, TOKEN_TYPE.COLON ])) {
       if (test([ TOKEN_TYPE.PLUS, TOKEN_TYPE.GREATER_THAN ])) {
+        rtn += ' ';
         rtn += combinator();
       }
+      rtn += ' ';
       rtn += selector();
     }
   }
@@ -87,7 +77,7 @@ export function selector(): string {
 export function simpleSelector(): string {
   let rtn: string;
 
-  if (test([ TOKEN_TYPE.IDENT, TOKEN_TYPE.ASTERISK ])) {
+  if (test([ TOKEN_TYPE.AMPERSAND, TOKEN_TYPE.CARET, TOKEN_TYPE.IDENT, TOKEN_TYPE.ASTERISK ])) {
     rtn = elementName();
     while (test([ TOKEN_TYPE.HASH, TOKEN_TYPE.DOT, TOKEN_TYPE.LEFT_SQUARE_BRACE, TOKEN_TYPE.COLON ])) {
       switch (token.type) {
@@ -131,6 +121,24 @@ export function simpleSelector(): string {
   return rtn;
 }
 
+export function elementName(): string {
+  let rtn: string;
+
+  rtn = token.value;
+  if (test(TOKEN_TYPE.AMPERSAND)) {
+    match(TOKEN_TYPE.AMPERSAND);
+  } else if (test(TOKEN_TYPE.CARET)) {
+    match(TOKEN_TYPE.CARET);
+  } else if (test(TOKEN_TYPE.IDENT)) {
+    match(TOKEN_TYPE.IDENT);
+  } else if (test(TOKEN_TYPE.ASTERISK)) {
+    match(TOKEN_TYPE.ASTERISK);
+  } else {
+    error();
+  }
+  return rtn;
+}
+
 export function klass(): string {
   let rtn: string;
 
@@ -138,20 +146,6 @@ export function klass(): string {
   match(TOKEN_TYPE.DOT);
   rtn += token.value;
   match(TOKEN_TYPE.IDENT);
-  return rtn;
-}
-
-export function elementName(): string {
-  let rtn: string;
-
-  rtn = token.value;
-  if (test(TOKEN_TYPE.IDENT)) {
-    match(TOKEN_TYPE.IDENT);
-  } else if (test(TOKEN_TYPE.ASTERISK)) {
-    match(TOKEN_TYPE.ASTERISK);
-  } else {
-    error();
-  }
   return rtn;
 }
 
@@ -374,17 +368,13 @@ export function hexColor(): string {
 export function makeNode(nodeType: NODE_TYPE): NODE {
   const node: NODE = {
     type: nodeType,
+    children: []
   };
 
-  if (nodeType === NODE_TYPE.ROOT || nodeType === NODE_TYPE.BLOCK) {
-    node.children = [];
-  }
-
-  if (nodeType === NODE_TYPE.BLOCK || nodeType === NODE_TYPE.ELEMENT) {
+  if (nodeType === NODE_TYPE.RULE) {
     node.selectors = [];
     node.declarations = [];
   }
-
   return node;
 }
 

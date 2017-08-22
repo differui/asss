@@ -39,6 +39,14 @@ const rules: RULE[] = [
     token: TOKEN_TYPE.HASH
   },
   {
+    re: `&(?:${RE.name})?`,
+    token: TOKEN_TYPE.AMPERSAND
+  },
+  {
+    re: `\\^(?:${RE.name})?`,
+    token: TOKEN_TYPE.CARET
+  },
+  {
     re: `!((?:${RE.w})|(?:${RE.comment}))*(?:${RE.I})(?:${RE.M})(?:${RE.P})(?:${RE.O})(?:${RE.R})(?:${RE.T})(?:${RE.A})(?:${RE.N})(?:${RE.T})`,
     token: TOKEN_TYPE.IMPORTANT_SYM
   },

@@ -1,5 +1,5 @@
 import { parse } from './parser';
 
-export default function compile(source) {
+export function compile(source) {
   return parse(source);
 }
