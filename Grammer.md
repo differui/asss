@@ -1,4 +1,4 @@
-# ASSS Grammar
+# SSSA Grammar
 
 ```txt
 *: 0 or more

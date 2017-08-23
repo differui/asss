@@ -1,4 +1,4 @@
-# ASSS
+# SSSA
 > A toy CSS preprocessor implementation with SASS like grammar.
 
 ## Setup
