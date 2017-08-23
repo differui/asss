@@ -6,27 +6,25 @@
 **CLI**
 
 ```bash
-npm i bcss -g
+npm i sssa -g
 
-# use
-bcss -c 'b {}'
-bcss --compile 'b { e {} }'
-bcss --help
+# examples
+sssa --help
+cat file.sssa | sssa
+echo '.a { .b { color: red; } }' | sssa
 ```
 
 **NodeJS**
 
 ```js
-import compile from 'bcss';
+import { compile } from 'sssa';
 
-console.log(compile('b {}', {
-  // options
-}));
+console.log(compile('b {}', opts));
 ```
 
 ## Options
 
-| no options
+| No opts yet!
 
 ## Develop
 
