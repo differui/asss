@@ -71,6 +71,7 @@ let declaration_type: [ string, string ];
 export type DECLARATION = typeof declaration_type;
 
 export interface COMPILER_OPTIONS {
-  scan: boolean;
-  parse: boolean;
+  scan?: boolean;
+  parse?: boolean;
+  transform?: boolean;
 }

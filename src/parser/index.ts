@@ -177,10 +177,12 @@ export function attrib(): string {
 
 export function pseudo(): string {
   let rtn: string;
-  const type = token.type;
 
   rtn = ':';
   match(TOKEN_TYPE.COLON);
+
+  const type = token.type; // depressed ts error
+
   switch (type) {
     case TOKEN_TYPE.IDENT:
       rtn += token.value;
@@ -191,6 +193,7 @@ export function pseudo(): string {
       match(TOKEN_TYPE.FUNCTION);
       eatWhiteSpace();
       if (token.type === TOKEN_TYPE.IDENT) {
+        rtn += ' ';
         rtn += token.value;
         eatWhiteSpace();
       }
