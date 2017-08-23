@@ -1,8 +1,11 @@
 {
-  "name": "bcss",
+  "name": "sssa",
   "version": "0.0.1",
-  "description": "A toy implementation of simple CSS preprocessor.",
+  "description": "A toy CSS preprocessor implementation with SASS like grammar.",
   "main": "dest/bundle.js",
+  "bin": {
+    "sssa": "bin/index.js"
+  },
   "scripts": {
     "build": "./node_modules/.bin/rollup -c",
     "watch": "./node_modules/.bin/rollup -c -w",
@@ -25,6 +28,8 @@
     "rollup-watch": "^3.2.2"
   },
   "dependencies": {
-    "lex": "^1.7.9"
+    "get-stdin": "^5.0.1",
+    "lex": "^1.7.9",
+    "meow": "^3.7.0"
   }
 }
