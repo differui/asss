@@ -10,8 +10,9 @@ const cli = meow(`
       $ sssa [options] [file ...]
 
     Options
-      -s, --scan   Scan only and output tokens
-      -p, --parse  Parse only and output ast
+      -s, --scan      Output tokens
+      -p, --parse     Output source code ast
+      -t, --transform Output target code ast
 
     Examples
       $ sssa file.sssa
@@ -21,11 +22,13 @@ const cli = meow(`
 `, {
   boolean: [
     'scan',
-    'parse'
+    'parse',
+    'transform'
   ],
   alias: {
     s: 'scan',
-    p: 'parse'
+    p: 'parse',
+    t: 'transform'
   }
 });
 
@@ -38,7 +41,8 @@ function run() {
 
     const result = compile(source, {
       scan: cli.flags.scan,
-      parse: cli.flags.parse
+      parse: cli.flags.parse,
+      transform: cli.flags.transform
     });
 
     console.log(typeof result === 'string' ? result : JSON.stringify(result, null, 2));
