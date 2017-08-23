@@ -75,3 +75,7 @@ export interface COMPILER_OPTIONS {
   parse?: boolean;
   transform?: boolean;
 }
+
+export interface GENERATOR_OPTIONS {
+  indent?: number;
+}
