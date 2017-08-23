@@ -665,9 +665,9 @@ function attrib() {
 }
 function pseudo() {
     var rtn;
-    var type = token.type;
     rtn = ':';
     match(TOKEN_TYPE.COLON);
+    var type = token.type; // depressed ts error
     switch (type) {
         case TOKEN_TYPE.IDENT:
             rtn += token.value;
@@ -678,6 +678,7 @@ function pseudo() {
             match(TOKEN_TYPE.FUNCTION);
             eatWhiteSpace();
             if (token.type === TOKEN_TYPE.IDENT) {
+                rtn += ' ';
                 rtn += token.value;
                 eatWhiteSpace();
             }
@@ -867,6 +868,102 @@ function error() {
     throw new Error('parse error');
 }
 
+function transform(ast) {
+    if (ast.type === NODE_TYPE.STYLESHEET) {
+        return transformStyleSheet(ast);
+    }
+    if (ast.type === NODE_TYPE.RULE) {
+        var stylesheetNode = makeNode$1(NODE_TYPE.STYLESHEET);
+        stylesheetNode.children = transformRule(ast);
+        return stylesheetNode;
+    }
+    throw new Error('Invalid abstract syntax tree.');
+}
+function transformStyleSheet(node) {
+    var stylesheetNode = makeNode$1(NODE_TYPE.STYLESHEET);
+    if (node.children.length) {
+        node.children.forEach(function (node) { return transformRule(node).forEach(function (subNode) { return stylesheetNode.children.push(subNode); }); });
+    }
+    return stylesheetNode;
+}
+function transformRule(node) {
+    var rtn = [];
+    var ruleNode = makeNode$1(NODE_TYPE.RULE);
+    ruleNode.declarations = node.declarations;
+    node.selectors.forEach(function (s) {
+        expandSelector(s).forEach(function (s) { return ruleNode.selectors.push(s); });
+    });
+    sPush(ruleNode);
+    rtn.push(ruleNode);
+    node.children.forEach(function (node) { return transformRule(node).forEach(function (subNode) { return rtn.push(subNode); }); });
+    sPop();
+    return rtn;
+}
+// utils
+// ====
+function expandSelector(selector) {
+    if (sIsEmpty()) {
+        return [selector];
+    }
+    else if (selector.indexOf('&') > -1) {
+        return sTop().selectors.map(function (parentSelector) {
+            return selector.replace(/&/g, parentSelector);
+        });
+    }
+    else if (selector.indexOf('^') > -1) {
+        return sBottom().selectors.map(function (rootSelector) {
+            return selector.replace(/\^/g, rootSelector);
+        });
+    }
+    else {
+        return sTop().selectors.map(function (parentSelector) {
+            return parentSelector + " " + selector;
+        });
+    }
+}
+function makeNode$1(nodeType) {
+    var node = {
+        type: nodeType
+    };
+    if (nodeType === NODE_TYPE.STYLESHEET) {
+        node.children = [];
+    }
+    else {
+        node.selectors = [];
+        node.declarations = [];
+    }
+    return node;
+}
+// stack
+// ====
+var stack = [];
+var MAX_STACK_LENGTH = 999;
+function sPush(item) {
+    if (stack.length < MAX_STACK_LENGTH) {
+        stack.push(item);
+    }
+    else {
+        throw new Error('Stack overflow');
+    }
+}
+function sPop() {
+    if (!sIsEmpty()) {
+        return stack.pop();
+    }
+    else {
+        throw new Error('Stack is empty');
+    }
+}
+function sTop() {
+    return sIsEmpty() ? null : stack[stack.length - 1];
+}
+function sBottom() {
+    return sIsEmpty() ? null : stack[0];
+}
+function sIsEmpty() {
+    return stack.length === 0;
+}
+
 function compile(source, opts) {
     if (opts.scan) {
         var tokens = [];
@@ -881,6 +978,9 @@ function compile(source, opts) {
     }
     else if (opts.parse) {
         return parse(source);
+    }
+    else if (opts.transform) {
+        return transform(parse(source));
     }
     else {
         return source;
