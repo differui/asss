@@ -1,7 +1,8 @@
+import { COMPILER_OPTIONS, TOKEN } from './types';
 import { setInput, getToken } from './tokenizer';
 import { parse } from './parser';
 import { transform } from './transformer';
-import { COMPILER_OPTIONS, TOKEN } from './types';
+import { generate } from './generator';
 
 export function compile(source, opts: COMPILER_OPTIONS) {
   if (opts.scan) {
@@ -20,6 +21,6 @@ export function compile(source, opts: COMPILER_OPTIONS) {
   } else if (opts.transform) {
     return transform(parse(source));
   } else {
-    return source;
+    return generate(transform(parse(source)));
   }
 }

@@ -964,6 +964,39 @@ function sIsEmpty() {
     return stack.length === 0;
 }
 
+function generate(ast, opts) {
+    if (opts === void 0) { opts = { indent: 2 }; }
+    if (ast.type === NODE_TYPE.STYLESHEET) {
+        var rtn_1 = [];
+        ast.children.forEach(function (node) {
+            var rule = generateRule(node, opts.indent);
+            if (rule) {
+                rtn_1.push(rule);
+            }
+        });
+        return rtn_1.join('\n');
+    }
+    if (ast.type === NODE_TYPE.RULE) {
+        return generateRule(ast, opts.indent).trim();
+    }
+    throw new Error('Invalid abstract syntax tree.');
+}
+function generateRule(node, indent) {
+    if (node.declarations.length) {
+        var spaces_1 = new Array(indent + 1).join(' ');
+        var declarations = node.declarations.map(function (_a) {
+            var k = _a[0], v = _a[1];
+            return ("" + spaces_1 + k + ": " + v);
+        }).join(';\n');
+        return [
+            (node.selectors.join(',') + " {"),
+            declarations,
+            '}'
+        ].join('\n');
+    }
+    return '';
+}
+
 function compile(source, opts) {
     if (opts.scan) {
         var tokens = [];
@@ -983,7 +1016,7 @@ function compile(source, opts) {
         return transform(parse(source));
     }
     else {
-        return source;
+        return generate(transform(parse(source)));
     }
 }
 
