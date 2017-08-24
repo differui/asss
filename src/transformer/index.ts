@@ -48,9 +48,14 @@ export function expandSelector(selector: string): string[] {
       return selector.replace(/&/g, parentSelector);
     });
   } else if (selector.indexOf('^') > -1) {
-    return sBottom().selectors.map((rootSelector) => {
-      return selector.replace(/\^/g, rootSelector);
+    const rtn: string[] = [];
+
+    sBottom().selectors.map((rootSelector) => {
+      sTop().selectors.map((parentSelector) => {
+        rtn.push(`${parentSelector} ${selector.replace(/\^/g, rootSelector)}`);
+      });
     });
+    return rtn;
   } else {
     return sTop().selectors.map((parentSelector) => {
       return `${parentSelector} ${selector}`;

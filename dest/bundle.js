@@ -911,9 +911,13 @@ function expandSelector(selector) {
         });
     }
     else if (selector.indexOf('^') > -1) {
-        return sBottom().selectors.map(function (rootSelector) {
-            return selector.replace(/\^/g, rootSelector);
+        var rtn_1 = [];
+        sBottom().selectors.map(function (rootSelector) {
+            sTop().selectors.map(function (parentSelector) {
+                rtn_1.push(parentSelector + " " + selector.replace(/\^/g, rootSelector));
+            });
         });
+        return rtn_1;
     }
     else {
         return sTop().selectors.map(function (parentSelector) {

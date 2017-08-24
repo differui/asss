@@ -1,6 +1,6 @@
 {
   "name": "sssa",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "A toy CSS preprocessor implementation with SASS like grammar.",
   "main": "dest/bundle.js",
   "bin": {
