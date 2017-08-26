@@ -1,4 +1,5 @@
 import { NODE, NODE_TYPE } from '../types';
+import { sPush, sPop, sTop, sBottom, sIsEmpty } from '../helper/stack';
 
 export function transform(ast: NODE): NODE {
   if (ast.type === NODE_TYPE.STYLESHEET) {
@@ -30,10 +31,10 @@ export function transformRule(node: NODE): NODE[] {
   node.selectors.forEach((s) => {
     expandSelector(s).forEach(s => ruleNode.selectors.push(s));
   });
-  sPush(ruleNode);
+  sPush<NODE>(ruleNode);
   rtn.push(ruleNode);
   node.children.forEach(node => transformRule(node).forEach(subNode => rtn.push(subNode)));
-  sPop();
+  sPop<NODE>();
   return rtn;
 }
 
@@ -44,20 +45,20 @@ export function expandSelector(selector: string): string[] {
   if (sIsEmpty()) {
     return [ selector ];
   } else if (selector.indexOf('&') > -1) {
-    return sTop().selectors.map((parentSelector) => {
+    return sTop<NODE>().selectors.map((parentSelector) => {
       return selector.replace(/&/g, parentSelector);
     });
   } else if (selector.indexOf('^') > -1) {
     const rtn: string[] = [];
 
-    sBottom().selectors.map((rootSelector) => {
-      sTop().selectors.map((parentSelector) => {
+    sBottom<NODE>().selectors.map((rootSelector) => {
+      sTop<NODE>().selectors.map((parentSelector) => {
         rtn.push(`${parentSelector} ${selector.replace(/\^/g, rootSelector)}`);
       });
     });
     return rtn;
   } else {
-    return sTop().selectors.map((parentSelector) => {
+    return sTop<NODE>().selectors.map((parentSelector) => {
       return `${parentSelector} ${selector}`;
     });
   }
@@ -75,38 +76,4 @@ export function makeNode(nodeType: NODE_TYPE): NODE {
     node.declarations = [];
   }
   return node;
-}
-
-// stack
-// ====
-
-const stack = [];
-const MAX_STACK_LENGTH = 999;
-
-function sPush(item: NODE): void {
-  if (stack.length < MAX_STACK_LENGTH) {
-    stack.push(item);
-  } else {
-    throw new Error('Stack overflow');
-  }
-}
-
-function sPop(): NODE {
-  if (!sIsEmpty()) {
-    return stack.pop();
-  } else {
-    throw new Error('Stack is empty');
-  }
-}
-
-function sTop(): NODE {
-  return sIsEmpty() ? null : stack[stack.length - 1];
-}
-
-function sBottom(): NODE {
-  return sIsEmpty() ? null : stack[0];
-}
-
-function sIsEmpty(): boolean {
-  return stack.length === 0;
 }
