@@ -868,6 +868,34 @@ function error() {
     throw new Error('parse error');
 }
 
+var stack = [];
+var MAX_STACK_LENGTH = 999;
+function sPush(item) {
+    if (stack.length < MAX_STACK_LENGTH) {
+        stack.push(item);
+    }
+    else {
+        throw new Error('Stack overflow');
+    }
+}
+function sPop() {
+    if (!sIsEmpty()) {
+        return stack.pop();
+    }
+    else {
+        throw new Error('Stack is empty');
+    }
+}
+function sTop() {
+    return sIsEmpty() ? null : stack[stack.length - 1];
+}
+function sBottom() {
+    return sIsEmpty() ? null : stack[0];
+}
+function sIsEmpty() {
+    return stack.length === 0;
+}
+
 function transform(ast) {
     if (ast.type === NODE_TYPE.STYLESHEET) {
         return transformStyleSheet(ast);
@@ -937,35 +965,6 @@ function makeNode$1(nodeType) {
         node.declarations = [];
     }
     return node;
-}
-// stack
-// ====
-var stack = [];
-var MAX_STACK_LENGTH = 999;
-function sPush(item) {
-    if (stack.length < MAX_STACK_LENGTH) {
-        stack.push(item);
-    }
-    else {
-        throw new Error('Stack overflow');
-    }
-}
-function sPop() {
-    if (!sIsEmpty()) {
-        return stack.pop();
-    }
-    else {
-        throw new Error('Stack is empty');
-    }
-}
-function sTop() {
-    return sIsEmpty() ? null : stack[stack.length - 1];
-}
-function sBottom() {
-    return sIsEmpty() ? null : stack[0];
-}
-function sIsEmpty() {
-    return stack.length === 0;
 }
 
 function generate(ast, opts) {
