@@ -1,4 +1,4 @@
-import { NODE, NODE_TYPE } from '../types';
+import { NODE, NODE_TYPE } from '../../types';
 import { sPush, sPop, sTop, sBottom, sIsEmpty } from '../helper/stack';
 
 export function transform(ast: NODE): NODE {

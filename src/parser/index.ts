@@ -1,4 +1,4 @@
-import { TOKEN, TOKEN_TYPE, NODE, NODE_TYPE, DECLARATION } from '../types';
+import { TOKEN, TOKEN_TYPE, NODE, NODE_TYPE, DECLARATION } from '../../types';
 import { setInput, getToken, peekNextNoWhiteSpaceToken } from '../tokenizer';
 
 let token: TOKEN;

@@ -1,4 +1,4 @@
-import { NODE_TYPE, NODE, GENERATOR_OPTIONS } from '../types';
+import { NODE_TYPE, NODE, GENERATOR_OPTIONS } from '../../types';
 
 export function generate(ast: NODE, opts: GENERATOR_OPTIONS = { indent: 2 }): string {
   if (ast.type === NODE_TYPE.STYLESHEET) {

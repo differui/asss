@@ -1,4 +1,4 @@
-import { COMPILER_OPTIONS, TOKEN } from './types';
+import { COMPILER_OPTIONS, TOKEN } from '../types';
 import { setInput, getToken } from './tokenizer';
 import { parse } from './parser';
 import { transform } from './transformer';

@@ -1,6 +1,6 @@
 import Lexer from 'lex';
 import rules from './rules';
-import { TOKEN, TOKEN_TYPE } from '../types';
+import { TOKEN, TOKEN_TYPE } from '../../types';
 
 let index = 0;
 let row = 1;
