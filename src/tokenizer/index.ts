@@ -1,10 +1,11 @@
 import Lexer from 'lex';
 import rules from './rules';
-import { TOKEN, TOKEN_TYPE } from '../../types';
+import { TOKEN } from '../../types';
+import { TOKEN_TYPE } from '../enums/tokenType';
 
-let index = 0;
-let row = 1;
-let col = 1;
+let index: number = 0;
+let row: number = 1;
+let col: number = 1;
 const tokens: TOKEN[] = [];
 
 const lexer = new Lexer((char) => {
@@ -16,7 +17,7 @@ rules.forEach((rule) => {
     return (yytext: string) => {
       tokens.push({
         type: r.token,
-        value: yytext
+        value: yytext,
       });
     };
   })(rule);
@@ -25,7 +26,7 @@ rules.forEach((rule) => {
 });
 
 lexer.addRule(/./, (yytext: string) => {
-  let tokenType = TOKEN_TYPE.UNKNOW;
+  let tokenType = TOKEN_TYPE.UNKNOWN;
 
   switch (yytext) {
     case ':': tokenType = TOKEN_TYPE.COLON; break;
@@ -60,23 +61,21 @@ export function setInput(source: string): void {
   lexer.lex();
 }
 
-export function getToken(): TOKEN {
+export function getToken(): void | TOKEN {
   if (index < tokens.length) {
     return tokens[index++];
   }
-  return null;
 }
 
-export function peekToken(step: number = 0): TOKEN {
+export function peekToken(step: number = 0): void | TOKEN {
   const targetIndex = index + step - 1;
 
   if ((targetIndex < tokens.length) && (targetIndex >= 0)) {
     return tokens[targetIndex];
   }
-  return null;
 }
 
-export function peekNextNoWhiteSpaceToken(): TOKEN {
+export function peekNextNoWhiteSpaceToken(): void | TOKEN {
   let step = 1;
   let nextToken = peekToken(step);
 

@@ -1,84 +1,42 @@
-import { COMPILER_OPTIONS } from '../src/types';
+import { TOKEN_TYPE } from "../src/enums/tokenType";
 
-export enum TOKEN_TYPE {
-  S = 'S',
-  COMMENTS = 'COMMENTS',
-  BAD_COMMENTS = 'BAD_COMMENTS',
-  INCLUDES = 'INCLUDES',
-  DASHMATCH = 'DASHMATCH',
-  STRING = 'STRING',
-  BAD_STRING = 'BAD_STRING',
-  IDENT = 'IDENT',
-  HASH = 'HASH',
-  IMPORTANT_SYM = 'IMPORTANT_SYM',
-  EMS = 'EMS',
-  EXS = 'EXS',
-  LENGTH = 'LENGTH',
-  ANGLE = 'ANGLE',
-  TIME = 'TIME',
-  FREQ = 'FREQ',
-  DIMENSION = 'DIMENSION',
-  PERCENTAGE = 'PERCENTAGE',
-  NUMBER = 'NUMBER',
-  URI = 'URI',
-  BAD_URI = 'BAD_URI',
-  FUNCTION = 'FUNCTION',
 
-  // marks
-  COLON = 'COLON',
-  SEMICOLON = 'SEMICOLON',
-  COMMA = 'COMMA',
-  LEFT_BRACE = 'LEFT_BRACE',
-  RIGHT_BRACE = 'RIGHT_BRACE',
-  LEFT_CURLY_BRACE = 'LEFT_CURLY_BRACE',
-  RIGHT_CURLY_BRACE = 'RIGHT_CURLY_BRACE',
-  LEFT_SQUARE_BRACE = 'LEFT_SQUARE_BRACE',
-  RIGHT_SQUARE_BRACE = 'RIGHT_SQUARE_BRACE',
-  PLUS = 'PLUS',
-  MINUS = 'MINUS',
-  GREATER_THAN = 'GREATER_THAN',
-  LESS_THAN = 'LESS_THAN',
-  EQUAL = 'EQUAL',
-  DOT = 'DOT',
-  ASTERISK = 'ASTERISK',
-  REVERSE_SOLIDUS = 'REVERSE_SOLIDUS',
-  AMPERSAND = 'AMPERSAND',
-  CARET = 'CARET',
-  UNKNOW = 'UNKNOW'
-};
-
-export enum NODE_TYPE {
-  STYLESHEET = 'STYLESHEET',
-  RULE = 'RULE'
-};
-
-export interface TOKEN {
+declare interface TOKEN {
   type: TOKEN_TYPE;
   value: string;
-};
+}
 
-export interface NODE {
-  type: NODE_TYPE;
-  selectors?: string[];
-  declarations?: DECLARATION[];
-  children?: NODE[];
-};
+declare interface STYLESHEET_NODE {
+  children: RULE_NODE[];
+}
 
-export interface RULE {
+declare interface RULE_NODE {
+  selectors: string[];
+  declarations: DECLARATION[];
+  children: RULE_NODE[];
+}
+
+declare interface RULE {
   re: string;
   token: TOKEN_TYPE;
-};
+}
 
-export type DECLARATION = [ string, string ];
+declare type DECLARATION = [ string, string ];
 
-export interface COMPILER_OPTIONS {
+declare interface COMPILER_OPTIONS {
   scan?: boolean;
   parse?: boolean;
   transform?: boolean;
 }
 
-export interface GENERATOR_OPTIONS {
-  indent?: number;
+declare interface GENERATOR_OPTIONS {
+  indent: number;
 }
 
-export type compile = (source: string, opt: COMPILER_OPTIONS) => string;
+declare module 'sssa' {
+  export function tokenize(source: string): TOKEN[];
+  export function parse(source: string): STYLESHEET_NODE;
+  export function transform(ast: STYLESHEET_NODE): STYLESHEET_NODE;
+  export function generate(ast: STYLESHEET_NODE, opts: GENERATOR_OPTIONS): string;
+  export function compile(source: string, opts: COMPILER_OPTIONS): string;
+}

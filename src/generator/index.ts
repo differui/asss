@@ -1,25 +1,19 @@
-import { NODE_TYPE, NODE, GENERATOR_OPTIONS } from '../../types';
+import { GENERATOR_OPTIONS, RULE_NODE, STYLESHEET_NODE } from '../../types';
 
-export function generate(ast: NODE, opts: GENERATOR_OPTIONS = { indent: 2 }): string {
-  if (ast.type === NODE_TYPE.STYLESHEET) {
-    const rtn: string[] = [];
+export function generate(ast: STYLESHEET_NODE, opts: GENERATOR_OPTIONS): string {
+  const rtn: string[] = [];
 
-    ast.children.forEach((node) => {
-      const rule = generateRule(node, opts.indent);
+  ast.children.forEach((node) => {
+    const rule = generateRule(node, opts.indent);
 
-      if (rule) {
-        rtn.push(rule);
-      }
-    });
-    return rtn.join('\n');
-  }
-  if (ast.type === NODE_TYPE.RULE) {
-    return generateRule(ast, opts.indent).trim();
-  }
-  throw new Error('Invalid abstract syntax tree.');
+    if (rule) {
+      rtn.push(rule);
+    }
+  });
+  return rtn.join('\n');
 }
 
-export function generateRule(node: NODE, indent: number): string {
+export function generateRule(node: RULE_NODE, indent: number): string | void {
   if (node.declarations.length) {
     const spaces = new Array(indent + 1).join(' ');
     const declarations = node.declarations.map(([ k, v ]) => `${spaces}${k}: ${v}`).join(';\n');
@@ -30,5 +24,4 @@ export function generateRule(node: NODE, indent: number): string {
       '}'
     ].join('\n');
   }
-  return '';
 }

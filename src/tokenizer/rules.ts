@@ -1,5 +1,6 @@
 import * as RE from './regexps';
-import { TOKEN_TYPE, RULE } from '../../types';
+import { RULE } from '../../types';
+import { TOKEN_TYPE } from '../enums/tokenType';
 
 const rules: RULE[] = [
   {
