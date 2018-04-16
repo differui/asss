@@ -14,6 +14,11 @@
     "start": "node dest/bundle.js",
     "test": "./node_modules/.bin/ava -s"
   },
+  "files": [
+    "bin",
+    "dest/*.js",
+    "types/*.ts"
+  ],
   "keywords": [
     "rollup"
   ],
