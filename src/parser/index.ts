@@ -1,44 +1,47 @@
-import { TOKEN, TOKEN_TYPE, NODE, NODE_TYPE, DECLARATION } from '../types';
+import { TOKEN_TYPE } from '../enums/tokenType';
+import { TOKEN, DECLARATION, STYLESHEET_NODE, RULE_NODE } from '../../types';
 import { setInput, getToken, peekNextNoWhiteSpaceToken } from '../tokenizer';
+import { makeStylesheetNode, makeRuleNode } from '../helper/node';
 
 let token: TOKEN;
 
-export function parse(source: string): NODE {
+export function parse(source: string): void | STYLESHEET_NODE {
   setInput(source);
-  token = getToken();
-  return stylesheet();
-};
+  token = getToken() as TOKEN;
+  if (token) {
+    return stylesheet();
+  }
+}
 
-export function stylesheet(): NODE {
-  const rootNode: NODE = makeNode(NODE_TYPE.STYLESHEET);
+export function stylesheet(): STYLESHEET_NODE {
+  const rootNode: STYLESHEET_NODE = makeStylesheetNode();
 
   eatWhiteSpace();
-  while (test([ TOKEN_TYPE.IDENT, TOKEN_TYPE.HASH, TOKEN_TYPE.DOT, TOKEN_TYPE.LEFT_SQUARE_BRACE, TOKEN_TYPE.COLON ])) {
+  while (test([TOKEN_TYPE.IDENT, TOKEN_TYPE.HASH, TOKEN_TYPE.DOT, TOKEN_TYPE.LEFT_SQUARE_BRACE, TOKEN_TYPE.COLON])) {
     rootNode.children.push(rule());
     eatWhiteSpace();
   }
   return rootNode;
 }
 
-export function rule(): NODE {
-  const rtn: NODE = makeNode(NODE_TYPE.RULE);
+export function rule(): RULE_NODE {
+  const ruleNode: RULE_NODE = makeRuleNode();
 
-  rtn.selectors = selectors();
+  ruleNode.selectors = selectors();
   match(TOKEN_TYPE.LEFT_CURLY_BRACE);
   eatWhiteSpace();
-  while (test([ TOKEN_TYPE.AMPERSAND, TOKEN_TYPE.CARET, TOKEN_TYPE.IDENT, TOKEN_TYPE.SEMICOLON, TOKEN_TYPE.DOT, TOKEN_TYPE.HASH, TOKEN_TYPE.LEFT_SQUARE_BRACE, TOKEN_TYPE.COLON ])) {
+  while (test([TOKEN_TYPE.AMPERSAND, TOKEN_TYPE.CARET, TOKEN_TYPE.IDENT, TOKEN_TYPE.SEMICOLON, TOKEN_TYPE.DOT, TOKEN_TYPE.HASH, TOKEN_TYPE.LEFT_SQUARE_BRACE, TOKEN_TYPE.COLON])) {
     const nextToken = peekNextNoWhiteSpaceToken();
 
     if ((test(TOKEN_TYPE.IDENT) && nextToken && nextToken.type === TOKEN_TYPE.COLON) || test(TOKEN_TYPE.SEMICOLON)) {
-      rtn.declarations = rtn.declarations.concat(declarations());
+      ruleNode.declarations = ruleNode.declarations.concat(declarations());
     } else {
-      rtn.children.push(rule());
+      ruleNode.children.push(rule());
     }
   }
-
   match(TOKEN_TYPE.RIGHT_CURLY_BRACE);
   eatWhiteSpace();
-  return rtn;
+  return ruleNode;
 }
 
 export function selectors(): string[] {
@@ -57,13 +60,13 @@ export function selector(): string {
   let rtn: string;
 
   rtn = simpleSelector();
-  if (test([ TOKEN_TYPE.PLUS, TOKEN_TYPE.GREATER_THAN ])) {
+  if (test([TOKEN_TYPE.PLUS, TOKEN_TYPE.GREATER_THAN])) {
     rtn += combinator();
     rtn += selector();
   } else if (test(TOKEN_TYPE.S)) {
     match(TOKEN_TYPE.S);
-    if (test([ TOKEN_TYPE.PLUS, TOKEN_TYPE.GREATER_THAN, TOKEN_TYPE.AMPERSAND, TOKEN_TYPE.CARET, TOKEN_TYPE.IDENT, TOKEN_TYPE.ASTERISK, TOKEN_TYPE.HASH, TOKEN_TYPE.DOT, TOKEN_TYPE.LEFT_SQUARE_BRACE, TOKEN_TYPE.COLON ])) {
-      if (test([ TOKEN_TYPE.PLUS, TOKEN_TYPE.GREATER_THAN ])) {
+    if (test([TOKEN_TYPE.PLUS, TOKEN_TYPE.GREATER_THAN, TOKEN_TYPE.AMPERSAND, TOKEN_TYPE.CARET, TOKEN_TYPE.IDENT, TOKEN_TYPE.ASTERISK, TOKEN_TYPE.HASH, TOKEN_TYPE.DOT, TOKEN_TYPE.LEFT_SQUARE_BRACE, TOKEN_TYPE.COLON])) {
+      if (test([TOKEN_TYPE.PLUS, TOKEN_TYPE.GREATER_THAN])) {
         rtn += ' ';
         rtn += combinator();
       }
@@ -77,9 +80,9 @@ export function selector(): string {
 export function simpleSelector(): string {
   let rtn: string;
 
-  if (test([ TOKEN_TYPE.AMPERSAND, TOKEN_TYPE.CARET, TOKEN_TYPE.IDENT, TOKEN_TYPE.ASTERISK ])) {
+  if (test([TOKEN_TYPE.AMPERSAND, TOKEN_TYPE.CARET, TOKEN_TYPE.IDENT, TOKEN_TYPE.ASTERISK])) {
     rtn = elementName();
-    while (test([ TOKEN_TYPE.HASH, TOKEN_TYPE.DOT, TOKEN_TYPE.LEFT_SQUARE_BRACE, TOKEN_TYPE.COLON ])) {
+    while (test([TOKEN_TYPE.HASH, TOKEN_TYPE.DOT, TOKEN_TYPE.LEFT_SQUARE_BRACE, TOKEN_TYPE.COLON])) {
       switch (token.type) {
         case TOKEN_TYPE.HASH:
           rtn += token.value;
@@ -116,7 +119,7 @@ export function simpleSelector(): string {
           break;
         default:
       }
-    } while (test([ TOKEN_TYPE.HASH, TOKEN_TYPE.DOT, TOKEN_TYPE.LEFT_SQUARE_BRACE, TOKEN_TYPE.COLON ]));
+    } while (test([TOKEN_TYPE.HASH, TOKEN_TYPE.DOT, TOKEN_TYPE.LEFT_SQUARE_BRACE, TOKEN_TYPE.COLON]));
   }
   return rtn;
 }
@@ -158,13 +161,13 @@ export function attrib(): string {
   rtn += token.value;
   match(TOKEN_TYPE.IDENT);
   eatWhiteSpace();
-  if (test([ TOKEN_TYPE.EQUAL, TOKEN_TYPE.INCLUDES, TOKEN_TYPE.DASHMATCH, TOKEN_TYPE.S, TOKEN_TYPE.IDENT, TOKEN_TYPE.STRING ])) {
-    if (test([ TOKEN_TYPE.EQUAL, TOKEN_TYPE.INCLUDES, TOKEN_TYPE.DASHMATCH ])) {
+  if (test([TOKEN_TYPE.EQUAL, TOKEN_TYPE.INCLUDES, TOKEN_TYPE.DASHMATCH, TOKEN_TYPE.S, TOKEN_TYPE.IDENT, TOKEN_TYPE.STRING])) {
+    if (test([TOKEN_TYPE.EQUAL, TOKEN_TYPE.INCLUDES, TOKEN_TYPE.DASHMATCH])) {
       rtn += token.value;
       match(token.type);
     }
     eatWhiteSpace();
-    if (test([ TOKEN_TYPE.IDENT, TOKEN_TYPE.STRING ])) {
+    if (test([TOKEN_TYPE.IDENT, TOKEN_TYPE.STRING])) {
       rtn += token.value;
       match(token.type);
     }
@@ -226,7 +229,7 @@ export function declarations(): DECLARATION[] {
 }
 
 export function declaration(): DECLARATION {
-  const rtn: DECLARATION = [ '', '' ];
+  const rtn: DECLARATION = ['', ''];
 
   rtn[0] = property();
   match(TOKEN_TYPE.COLON);
@@ -309,8 +312,8 @@ export function property(): string {
 export function expr(): string {
   let rtn: string = term();
 
-  while (test([ TOKEN_TYPE.REVERSE_SOLIDUS, TOKEN_TYPE.COMMA, TOKEN_TYPE.PLUS, TOKEN_TYPE.MINUS, TOKEN_TYPE.NUMBER, TOKEN_TYPE.PERCENTAGE, TOKEN_TYPE.LENGTH, TOKEN_TYPE.EMS, TOKEN_TYPE.EXS, TOKEN_TYPE.ANGLE, TOKEN_TYPE.TIME, TOKEN_TYPE.FREQ, TOKEN_TYPE.STRING, TOKEN_TYPE.IDENT, TOKEN_TYPE.URI, TOKEN_TYPE.HASH, TOKEN_TYPE.FUNCTION ])) {
-    if (test([ TOKEN_TYPE.REVERSE_SOLIDUS, TOKEN_TYPE.COMMA ])) {
+  while (test([TOKEN_TYPE.REVERSE_SOLIDUS, TOKEN_TYPE.COMMA, TOKEN_TYPE.PLUS, TOKEN_TYPE.MINUS, TOKEN_TYPE.NUMBER, TOKEN_TYPE.PERCENTAGE, TOKEN_TYPE.LENGTH, TOKEN_TYPE.EMS, TOKEN_TYPE.EXS, TOKEN_TYPE.ANGLE, TOKEN_TYPE.TIME, TOKEN_TYPE.FREQ, TOKEN_TYPE.STRING, TOKEN_TYPE.IDENT, TOKEN_TYPE.URI, TOKEN_TYPE.HASH, TOKEN_TYPE.FUNCTION])) {
+    if (test([TOKEN_TYPE.REVERSE_SOLIDUS, TOKEN_TYPE.COMMA])) {
       rtn += operator();
     } else {
       rtn += rtn ? ' ' : rtn;
@@ -323,14 +326,14 @@ export function expr(): string {
 export function term(): string {
   let rtn: string = '';
 
-  if (test([ TOKEN_TYPE.PLUS, TOKEN_TYPE.MINUS ])) {
+  if (test([TOKEN_TYPE.PLUS, TOKEN_TYPE.MINUS])) {
     rtn += unaryOperator();
   }
-  if (test([ TOKEN_TYPE.NUMBER, TOKEN_TYPE.PERCENTAGE, TOKEN_TYPE.LENGTH, TOKEN_TYPE.EMS, TOKEN_TYPE.EXS, TOKEN_TYPE.ANGLE, TOKEN_TYPE.TIME, TOKEN_TYPE.FREQ ])) {
+  if (test([TOKEN_TYPE.NUMBER, TOKEN_TYPE.PERCENTAGE, TOKEN_TYPE.LENGTH, TOKEN_TYPE.EMS, TOKEN_TYPE.EXS, TOKEN_TYPE.ANGLE, TOKEN_TYPE.TIME, TOKEN_TYPE.FREQ])) {
     rtn += token.value;
     match(token.type);
     eatWhiteSpace();
-  } else if (test([ TOKEN_TYPE.STRING, TOKEN_TYPE.IDENT, TOKEN_TYPE.URI ])) {
+  } else if (test([TOKEN_TYPE.STRING, TOKEN_TYPE.IDENT, TOKEN_TYPE.URI])) {
     rtn += token.value
     match(token.type);
     eatWhiteSpace();
@@ -368,19 +371,6 @@ export function hexColor(): string {
 // utils
 // ====
 
-export function makeNode(nodeType: NODE_TYPE): NODE {
-  const node: NODE = {
-    type: nodeType,
-    children: []
-  };
-
-  if (nodeType === NODE_TYPE.RULE) {
-    node.selectors = [];
-    node.declarations = [];
-  }
-  return node;
-}
-
 export function eatWhiteSpace() {
   while (token && test(TOKEN_TYPE.S)) {
     next();
@@ -399,7 +389,7 @@ export function test(expected: TOKEN_TYPE | TOKEN_TYPE[]): boolean {
 }
 
 export function next(): void {
-  token = getToken();
+  token = getToken() as TOKEN;
 }
 
 export function match(expected: TOKEN_TYPE): void {

@@ -42,40 +42,5 @@ export enum TOKEN_TYPE {
   REVERSE_SOLIDUS = 'REVERSE_SOLIDUS',
   AMPERSAND = 'AMPERSAND',
   CARET = 'CARET',
-  UNKNOW = 'UNKNOW'
-};
-
-export enum NODE_TYPE {
-  STYLESHEET = 'STYLESHEET',
-  RULE = 'RULE'
-};
-
-export interface TOKEN {
-  type: TOKEN_TYPE;
-  value: string;
-};
-
-export interface NODE {
-  type: NODE_TYPE;
-  selectors?: string[];
-  declarations?: DECLARATION[];
-  children?: NODE[];
-};
-
-export interface RULE {
-  re: string;
-  token: TOKEN_TYPE;
-};
-
-let declaration_type: [ string, string ];
-export type DECLARATION = typeof declaration_type;
-
-export interface COMPILER_OPTIONS {
-  scan?: boolean;
-  parse?: boolean;
-  transform?: boolean;
-}
-
-export interface GENERATOR_OPTIONS {
-  indent?: number;
+  UNKNOWN = 'UNKNOWN',
 }

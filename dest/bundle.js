@@ -246,14 +246,8 @@ var TOKEN_TYPE;
     TOKEN_TYPE[TOKEN_TYPE["REVERSE_SOLIDUS"] = 'REVERSE_SOLIDUS'] = "REVERSE_SOLIDUS";
     TOKEN_TYPE[TOKEN_TYPE["AMPERSAND"] = 'AMPERSAND'] = "AMPERSAND";
     TOKEN_TYPE[TOKEN_TYPE["CARET"] = 'CARET'] = "CARET";
-    TOKEN_TYPE[TOKEN_TYPE["UNKNOW"] = 'UNKNOW'] = "UNKNOW";
+    TOKEN_TYPE[TOKEN_TYPE["UNKNOWN"] = 'UNKNOWN'] = "UNKNOWN";
 })(TOKEN_TYPE || (TOKEN_TYPE = {}));
-
-var NODE_TYPE;
-(function (NODE_TYPE) {
-    NODE_TYPE[NODE_TYPE["STYLESHEET"] = 'STYLESHEET'] = "STYLESHEET";
-    NODE_TYPE[NODE_TYPE["RULE"] = 'RULE'] = "RULE";
-})(NODE_TYPE || (NODE_TYPE = {}));
 
 var rules = [
     {
@@ -413,7 +407,7 @@ rules.forEach(function (rule) {
     lexer.addRule(new RegExp(rule.re, 'i'), createToken);
 });
 lexer.addRule(/./, function (yytext) {
-    var tokenType = TOKEN_TYPE.UNKNOW;
+    var tokenType = TOKEN_TYPE.UNKNOWN;
     switch (yytext) {
         case ':':
             tokenType = TOKEN_TYPE.COLON;
@@ -482,7 +476,6 @@ function getToken() {
     if (index < tokens.length) {
         return tokens[index++];
     }
-    return null;
 }
 function peekToken(step) {
     if (step === void 0) { step = 0; }
@@ -490,7 +483,6 @@ function peekToken(step) {
     if ((targetIndex < tokens.length) && (targetIndex >= 0)) {
         return tokens[targetIndex];
     }
-    return null;
 }
 function peekNextNoWhiteSpaceToken() {
     var step = 1;
@@ -501,15 +493,31 @@ function peekNextNoWhiteSpaceToken() {
     return nextToken;
 }
 
+function makeStylesheetNode() {
+    var stylesheetNode = {
+        children: []
+    };
+    return stylesheetNode;
+}
+function makeRuleNode() {
+    var ruleNode = {
+        selectors: [],
+        declarations: [],
+        children: []
+    };
+    return ruleNode;
+}
+
 var token;
 function parse(source) {
     setInput(source);
     token = getToken();
-    return stylesheet();
+    if (token) {
+        return stylesheet();
+    }
 }
-
 function stylesheet() {
-    var rootNode = makeNode(NODE_TYPE.STYLESHEET);
+    var rootNode = makeStylesheetNode();
     eatWhiteSpace();
     while (test([TOKEN_TYPE.IDENT, TOKEN_TYPE.HASH, TOKEN_TYPE.DOT, TOKEN_TYPE.LEFT_SQUARE_BRACE, TOKEN_TYPE.COLON])) {
         rootNode.children.push(rule());
@@ -518,22 +526,22 @@ function stylesheet() {
     return rootNode;
 }
 function rule() {
-    var rtn = makeNode(NODE_TYPE.RULE);
-    rtn.selectors = selectors();
+    var ruleNode = makeRuleNode();
+    ruleNode.selectors = selectors();
     match(TOKEN_TYPE.LEFT_CURLY_BRACE);
     eatWhiteSpace();
     while (test([TOKEN_TYPE.AMPERSAND, TOKEN_TYPE.CARET, TOKEN_TYPE.IDENT, TOKEN_TYPE.SEMICOLON, TOKEN_TYPE.DOT, TOKEN_TYPE.HASH, TOKEN_TYPE.LEFT_SQUARE_BRACE, TOKEN_TYPE.COLON])) {
         var nextToken = peekNextNoWhiteSpaceToken();
         if ((test(TOKEN_TYPE.IDENT) && nextToken && nextToken.type === TOKEN_TYPE.COLON) || test(TOKEN_TYPE.SEMICOLON)) {
-            rtn.declarations = rtn.declarations.concat(declarations());
+            ruleNode.declarations = ruleNode.declarations.concat(declarations());
         }
         else {
-            rtn.children.push(rule());
+            ruleNode.children.push(rule());
         }
     }
     match(TOKEN_TYPE.RIGHT_CURLY_BRACE);
     eatWhiteSpace();
-    return rtn;
+    return ruleNode;
 }
 function selectors() {
     var rtn = [];
@@ -826,17 +834,6 @@ function hexColor() {
 }
 // utils
 // ====
-function makeNode(nodeType) {
-    var node = {
-        type: nodeType,
-        children: []
-    };
-    if (nodeType === NODE_TYPE.RULE) {
-        node.selectors = [];
-        node.declarations = [];
-    }
-    return node;
-}
 function eatWhiteSpace() {
     while (token && test(TOKEN_TYPE.S)) {
         next();
@@ -882,33 +879,29 @@ function sPop() {
     if (!sIsEmpty()) {
         return stack.pop();
     }
-    else {
-        throw new Error('Stack is empty');
-    }
+    throw new Error('Stack is empty');
 }
 function sTop() {
-    return sIsEmpty() ? null : stack[stack.length - 1];
+    if (!sIsEmpty()) {
+        return stack[stack.length - 1];
+    }
+    throw new Error('Stack is empty');
 }
 function sBottom() {
-    return sIsEmpty() ? null : stack[0];
+    if (!sIsEmpty()) {
+        return stack[0];
+    }
+    throw new Error('Stack is empty');
 }
 function sIsEmpty() {
     return stack.length === 0;
 }
 
 function transform(ast) {
-    if (ast.type === NODE_TYPE.STYLESHEET) {
-        return transformStyleSheet(ast);
-    }
-    if (ast.type === NODE_TYPE.RULE) {
-        var stylesheetNode = makeNode$1(NODE_TYPE.STYLESHEET);
-        stylesheetNode.children = transformRule(ast);
-        return stylesheetNode;
-    }
-    throw new Error('Invalid abstract syntax tree.');
+    return transformStyleSheet(ast);
 }
 function transformStyleSheet(node) {
-    var stylesheetNode = makeNode$1(NODE_TYPE.STYLESHEET);
+    var stylesheetNode = makeStylesheetNode();
     if (node.children.length) {
         node.children.forEach(function (node) { return transformRule(node).forEach(function (subNode) { return stylesheetNode.children.push(subNode); }); });
     }
@@ -916,7 +909,7 @@ function transformStyleSheet(node) {
 }
 function transformRule(node) {
     var rtn = [];
-    var ruleNode = makeNode$1(NODE_TYPE.RULE);
+    var ruleNode = makeRuleNode();
     ruleNode.declarations = node.declarations;
     node.selectors.forEach(function (s) {
         expandSelector(s).forEach(function (s) { return ruleNode.selectors.push(s); });
@@ -953,36 +946,16 @@ function expandSelector(selector) {
         });
     }
 }
-function makeNode$1(nodeType) {
-    var node = {
-        type: nodeType
-    };
-    if (nodeType === NODE_TYPE.STYLESHEET) {
-        node.children = [];
-    }
-    else {
-        node.selectors = [];
-        node.declarations = [];
-    }
-    return node;
-}
 
 function generate(ast, opts) {
-    if (opts === void 0) { opts = { indent: 2 }; }
-    if (ast.type === NODE_TYPE.STYLESHEET) {
-        var rtn_1 = [];
-        ast.children.forEach(function (node) {
-            var rule = generateRule(node, opts.indent);
-            if (rule) {
-                rtn_1.push(rule);
-            }
-        });
-        return rtn_1.join('\n');
-    }
-    if (ast.type === NODE_TYPE.RULE) {
-        return generateRule(ast, opts.indent).trim();
-    }
-    throw new Error('Invalid abstract syntax tree.');
+    var rtn = [];
+    ast.children.forEach(function (node) {
+        var rule = generateRule(node, opts.indent);
+        if (rule) {
+            rtn.push(rule);
+        }
+    });
+    return rtn.join('\n');
 }
 function generateRule(node, indent) {
     if (node.declarations.length) {
@@ -997,30 +970,44 @@ function generateRule(node, indent) {
             '}'
         ].join('\n');
     }
-    return '';
 }
 
+function tokenize(source) {
+    var tokens = [];
+    var token;
+    setInput(source);
+    token = getToken();
+    while (token) {
+        tokens.push(token);
+        token = getToken();
+    }
+    return tokens;
+}
 function compile(source, opts) {
     if (opts.scan) {
-        var tokens = [];
-        var token = void 0;
-        setInput(source);
-        token = getToken();
-        while (token) {
-            tokens.push(token);
-            token = getToken();
-        }
-        return tokens;
+        return tokenize(source);
     }
     else if (opts.parse) {
         return parse(source);
     }
     else if (opts.transform) {
-        return transform(parse(source));
+        var ast = parse(source);
+        if (ast) {
+            return transform(ast);
+        }
     }
     else {
-        return generate(transform(parse(source)));
+        var ast = parse(source);
+        if (ast) {
+            return generate(transform(ast), {
+                indent: 2
+            });
+        }
     }
 }
 
+exports.tokenize = tokenize;
+exports.parse = parse;
+exports.transform = transform;
+exports.generate = generate;
 exports.compile = compile;

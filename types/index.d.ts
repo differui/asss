@@ -1,3 +1,42 @@
-import { COMPILER_OPTIONS } from '../src/types';
+import { TOKEN_TYPE } from "../src/enums/tokenType";
 
-export type compile = (source: string, opt: COMPILER_OPTIONS) => string;
+
+declare interface TOKEN {
+  type: TOKEN_TYPE;
+  value: string;
+}
+
+declare interface STYLESHEET_NODE {
+  children: RULE_NODE[];
+}
+
+declare interface RULE_NODE {
+  selectors: string[];
+  declarations: DECLARATION[];
+  children: RULE_NODE[];
+}
+
+declare interface RULE {
+  re: string;
+  token: TOKEN_TYPE;
+}
+
+declare type DECLARATION = [ string, string ];
+
+declare interface COMPILER_OPTIONS {
+  scan?: boolean;
+  parse?: boolean;
+  transform?: boolean;
+}
+
+declare interface GENERATOR_OPTIONS {
+  indent: number;
+}
+
+declare module 'sssa' {
+  export function tokenize(source: string): TOKEN[];
+  export function parse(source: string): STYLESHEET_NODE;
+  export function transform(ast: STYLESHEET_NODE): STYLESHEET_NODE;
+  export function generate(ast: STYLESHEET_NODE, opts: GENERATOR_OPTIONS): string;
+  export function compile(source: string, opts: COMPILER_OPTIONS): string;
+}
