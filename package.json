@@ -3,6 +3,7 @@
   "version": "0.1.2",
   "description": "A toy CSS preprocessor implementation with SASS like grammar.",
   "main": "dest/bundle.js",
+  "typings": "types/index.d.ts",
   "bin": {
     "sssa": "bin/index.js"
   },

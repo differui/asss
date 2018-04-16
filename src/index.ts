@@ -4,7 +4,7 @@ import { parse } from './parser';
 import { transform } from './transformer';
 import { generate } from './generator';
 
-export function compile(source, opts: COMPILER_OPTIONS) {
+export function compile(source: string, opts: COMPILER_OPTIONS) {
   if (opts.scan) {
     const tokens: TOKEN[] = [];
     let token: TOKEN;
