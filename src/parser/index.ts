@@ -1,16 +1,19 @@
 import { TOKEN_TYPE } from '../enums/tokenType';
-import { TOKEN, DECLARATION, STYLESHEET_NODE, RULE_NODE } from '../../types';
+import { TOKEN, DECLARATION, STYLESHEET_NODE, RULE_NODE, PARSE_RESULT } from '../../types';
 import { setInput, getToken, peekNextNoWhiteSpaceToken } from '../tokenizer';
 import { makeStylesheetNode, makeRuleNode } from '../helper/node';
 
 let token: TOKEN;
 
-export function parse(source: string): void | STYLESHEET_NODE {
+export function parse(source: string): PARSE_RESULT {
   setInput(source);
   token = getToken() as TOKEN;
   if (token) {
-    return stylesheet();
+    return {
+      ast: stylesheet(),
+    }
   }
+  return {};
 }
 
 export function stylesheet(): STYLESHEET_NODE {

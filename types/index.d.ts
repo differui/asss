@@ -1,4 +1,5 @@
 import { TOKEN_TYPE } from "../src/enums/tokenType";
+import { makeStylesheetNode } from "../src/helper/node";
 
 
 declare interface TOKEN {
@@ -31,6 +32,16 @@ declare interface COMPILER_OPTIONS {
 
 declare interface GENERATOR_OPTIONS {
   indent: number;
+}
+
+declare interface COMPILE_RESULT {
+  code?: string;
+  ast?: STYLESHEET_NODE;
+  tokens?: TOKEN[];
+}
+
+declare interface PARSE_RESULT {
+  ast?: STYLESHEET_NODE;
 }
 
 declare module 'sssa' {

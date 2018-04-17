@@ -513,8 +513,11 @@ function parse(source) {
     setInput(source);
     token = getToken();
     if (token) {
-        return stylesheet();
+        return {
+            ast: stylesheet()
+        };
     }
+    return {};
 }
 function stylesheet() {
     var rootNode = makeStylesheetNode();
@@ -970,6 +973,7 @@ function generateRule(node, indent) {
             '}'
         ].join('\n');
     }
+    return '';
 }
 
 function tokenize(source) {
@@ -985,23 +989,34 @@ function tokenize(source) {
 }
 function compile(source, opts) {
     if (opts.scan) {
-        return tokenize(source);
+        return {
+            tokens: tokenize(source)
+        };
     }
     else if (opts.parse) {
-        return parse(source);
+        var ast = parse(source).ast;
+        if (ast) {
+            return {
+                ast
+            };
+        }
     }
     else if (opts.transform) {
-        var ast = parse(source);
+        var ast = parse(source).ast;
         if (ast) {
-            return transform(ast);
+            return {
+                ast: transform(ast)
+            };
         }
     }
     else {
-        var ast = parse(source);
+        var ast = parse(source).ast;
         if (ast) {
-            return generate(transform(ast), {
-                indent: 2
-            });
+            return {
+                code: generate(transform(ast), {
+                    indent: 2
+                })
+            };
         }
     }
 }
