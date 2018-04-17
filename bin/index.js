@@ -45,7 +45,7 @@ function run() {
       transform: cli.flags.transform
     });
 
-    console.log(typeof result === 'string' ? result : JSON.stringify(result, null, 2));
+    console.log(typeof result === 'string' ? result : JSON.stringify(result, undefined, 2));
   });
 }
 
