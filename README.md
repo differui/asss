@@ -34,12 +34,18 @@ echo '.a { .b { color: red; } }' | sssa
 ```js
 import { compile } from 'sssa';
 
-console.log(compile('b {}', opts));
+const {
+  tokens,
+  ast,
+  code,
+} = compile('b {}', opts);
 ```
 
 ## Options
 
-| No opts yet!
++ `opts.scan` Only proceed tokenize and return tokens;
++ `opts.parse` Proceed tokenize and generate corresponding ast;
++ `opts.transform` Transform SSSA ast to CSS ast;
 
 ## Develop
 
