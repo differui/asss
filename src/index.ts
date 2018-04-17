@@ -1,4 +1,4 @@
-import { COMPILER_OPTIONS, TOKEN, STYLESHEET_NODE } from '../types';
+import { COMPILER_OPTIONS, TOKEN, STYLESHEET_NODE, COMPILE_RESULT } from '../types';
 import { setInput, getToken } from './tokenizer';
 import { parse } from './parser';
 import { transform } from './transformer';
@@ -17,24 +17,36 @@ function tokenize(source: string): TOKEN[] {
   return tokens;
 }
 
-function compile(source: string, opts: COMPILER_OPTIONS): void | TOKEN[] | STYLESHEET_NODE | string {
+function compile(source: string, opts: COMPILER_OPTIONS): void | COMPILE_RESULT {
   if (opts.scan) {
-    return tokenize(source)
+    return {
+      tokens: tokenize(source),
+    };
   } else if (opts.parse) {
-    return parse(source);
-  } else if (opts.transform) {
-    const ast = parse(source);
+    const { ast } = parse(source);
 
     if (ast) {
-      return transform(ast);
+      return {
+        ast,
+      };
+    }
+  } else if (opts.transform) {
+    const { ast } = parse(source);
+
+    if (ast) {
+      return {
+        ast: transform(ast),
+      };
     }
   } else {
-    const ast = parse(source);
+    const { ast } = parse(source);
 
     if (ast) {
-      return generate(transform(ast), {
-        indent: 2,
-      });
+      return {
+        code: generate(transform(ast), {
+          indent: 2,
+        }),
+      };
     }
   }
 }
