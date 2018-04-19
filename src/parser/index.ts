@@ -1,5 +1,4 @@
 import { TOKEN_TYPE } from '../enums/tokenType';
-import { TOKEN, DECLARATION, STYLESHEET_NODE, RULE_NODE, PARSE_RESULT } from '../../types';
 import { setInput, getToken, peekNextNoWhiteSpaceToken } from '../tokenizer';
 import { makeStylesheetNode, makeRuleNode } from '../helper/node';
 

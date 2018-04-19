@@ -1,6 +1,4 @@
-import { TOKEN_TYPE } from "../src/enums/tokenType";
-import { makeStylesheetNode } from "../src/helper/node";
-
+import { TOKEN_TYPE } from '../src/enums/tokenType';
 
 declare interface TOKEN {
   type: TOKEN_TYPE;

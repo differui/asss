@@ -1,6 +1,5 @@
 import Lexer from 'lex';
 import rules from './rules';
-import { TOKEN } from '../../types';
 import { TOKEN_TYPE } from '../enums/tokenType';
 
 let index: number = 0;

@@ -1,5 +1,3 @@
-import { GENERATOR_OPTIONS, RULE_NODE, STYLESHEET_NODE } from '../../types';
-
 export function generate(ast: STYLESHEET_NODE, opts: GENERATOR_OPTIONS): string {
   const rtn: string[] = [];
 

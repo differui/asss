@@ -1,5 +1,4 @@
 import { sPush, sPop, sTop, sBottom, sIsEmpty } from '../helper/stack';
-import { STYLESHEET_NODE, RULE_NODE } from '../../types';
 import { makeRuleNode, makeStylesheetNode } from '../helper/node';
 
 export function transform(ast: STYLESHEET_NODE): STYLESHEET_NODE {

@@ -1,4 +1,3 @@
-import { COMPILER_OPTIONS, TOKEN, STYLESHEET_NODE, COMPILE_RESULT } from '../types';
 import { setInput, getToken } from './tokenizer';
 import { parse } from './parser';
 import { transform } from './transformer';
