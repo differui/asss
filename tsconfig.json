@@ -6,25 +6,14 @@
       "es2017",
       "es2015",
       "es2015.promise",
-      "dom"
+      "dom",
     ],
-    "allowJs": true,
-    "strict": true,
-    "noImplicitAny": false,
     "moduleResolution": "node",
     "baseUrl": ".",
-    "typeRoots": [
-      "./node_modules/@types"
-    ],
-    "allowSyntheticDefaultImports": true,
+    "paths": {
+      "@/*": ["src/*"],
+    },
     "experimentalDecorators": true,
     "emitDecoratorMetadata": true,
   },
-  "include": [
-    "./src/**/*.ts",
-    "./types/**/*.ts",
-  ],
-  "exclude": [
-    "dest",
-  ],
 }
