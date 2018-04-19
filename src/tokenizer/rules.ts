@@ -1,142 +1,141 @@
 import * as RE from './regexps';
-import { TOKEN_TYPE } from '../enums/tokenType';
 
 const rules: RULE[] = [
   {
     re: RE.s,
-    token: TOKEN_TYPE.S,
+    token: 'S',
   },
   {
     re: '\\/\\*[^*]*\\*+([^/*][^*]*\\*+)*\\/',
-    token: TOKEN_TYPE.COMMENTS
+    token: 'COMMENTS',
   },
   {
     re: RE.badcomment,
-    token: TOKEN_TYPE.BAD_COMMENTS
+    token: 'BAD_COMMENTS',
   },
   {
     re: '~=',
-    token: TOKEN_TYPE.INCLUDES
+    token: 'INCLUDES',
   },
   {
     re: '\\|=',
-    token: TOKEN_TYPE.DASHMATCH
+    token: 'DASHMATCH',
   },
   {
     re: RE.string,
-    token: TOKEN_TYPE.STRING
+    token: 'STRING',
   },
   {
     re: RE.badstring,
-    token: TOKEN_TYPE.BAD_STRING
+    token: 'BAD_STRING',
   },
   {
     re: RE.ident,
-    token: TOKEN_TYPE.IDENT
+    token: 'IDENT',
   },
   {
     re: `#(?:${RE.name})`,
-    token: TOKEN_TYPE.HASH
+    token: 'HASH',
   },
   {
     re: `&(?:${RE.name})?`,
-    token: TOKEN_TYPE.AMPERSAND
+    token: 'AMPERSAND',
   },
   {
     re: `\\^(?:${RE.name})?`,
-    token: TOKEN_TYPE.CARET
+    token: 'CARET',
   },
   {
     re: `!((?:${RE.w})|(?:${RE.comment}))*(?:${RE.I})(?:${RE.M})(?:${RE.P})(?:${RE.O})(?:${RE.R})(?:${RE.T})(?:${RE.A})(?:${RE.N})(?:${RE.T})`,
-    token: TOKEN_TYPE.IMPORTANT_SYM
+    token: 'IMPORTANT_SYM',
   },
   {
     re: `(?:${RE.num})(?:${RE.E})(?:${RE.M})`,
-    token: TOKEN_TYPE.EMS
+    token: 'EMS',
   },
   {
     re: `(?:${RE.num})(?:${RE.E})(?:${RE.X})`,
-    token: TOKEN_TYPE.EXS
+    token: 'EXS',
   },
   {
     re: `(?:${RE.num})(?:${RE.P})(?:${RE.X})`,
-    token: TOKEN_TYPE.LENGTH
+    token: 'LENGTH',
   },
   {
     re: `(?:${RE.num})(?:${RE.C})(?:${RE.M})`,
-    token: TOKEN_TYPE.LENGTH
+    token: 'LENGTH',
   },
   {
     re: `(?:${RE.num})(?:${RE.M})(?:${RE.M})`,
-    token: TOKEN_TYPE.LENGTH
+    token: 'LENGTH',
   },
   {
     re: `(?:${RE.num})(?:${RE.I})(?:${RE.N})`,
-    token: TOKEN_TYPE.LENGTH
+    token: 'LENGTH',
   },
   {
     re: `(?:${RE.num})(?:${RE.P})(?:${RE.T})`,
-    token: TOKEN_TYPE.LENGTH
+    token: 'LENGTH',
   },
   {
     re: `(?:${RE.num})(?:${RE.P})(?:${RE.C})`,
-    token: TOKEN_TYPE.LENGTH
+    token: 'LENGTH',
   },
   {
     re: `(?:${RE.D})(?:${RE.E})(?:${RE.G})`,
-    token: TOKEN_TYPE.ANGLE
+    token: 'ANGLE',
   },
   {
     re: `(?:${RE.R})(?:${RE.A})(?:${RE.D})`,
-    token: TOKEN_TYPE.ANGLE
+    token: 'ANGLE',
   },
   {
     re: `(?:${RE.G})(?:${RE.R})(?:${RE.A})(?:${RE.D})`,
-    token: TOKEN_TYPE.ANGLE
+    token: 'ANGLE',
   },
   {
     re: `(?:${RE.M})(?:${RE.S})`,
-    token: TOKEN_TYPE.TIME
+    token: 'TIME',
   },
   {
     re: RE.S,
-    token: TOKEN_TYPE.TIME
+    token: 'TIME',
   },
   {
     re: `(?:${RE.H})(?:${RE.Z})`,
-    token: TOKEN_TYPE.FREQ
+    token: 'FREQ',
   },
   {
     re: `(?:${RE.K})(?:${RE.H})(?:${RE.Z})`,
-    token: TOKEN_TYPE.FREQ
+    token: 'FREQ',
   },
   {
     re: `(?:${RE.num})(?:${RE.ident})`,
-    token: TOKEN_TYPE.DIMENSION
+    token: 'DIMENSION',
   },
   {
     re: `(?:${RE.num})%`,
-    token: TOKEN_TYPE.PERCENTAGE
+    token: 'PERCENTAGE',
   },
   {
     re: RE.num,
-    token: TOKEN_TYPE.NUMBER
+    token: 'NUMBER',
   },
   {
     re: `url\\((?:${RE.w})(?:${RE.string})(?:${RE.w})\\)`,
-    token: TOKEN_TYPE.URI
+    token: 'URI',
   },
   {
     re: `url\\((?:${RE.w})(?:${RE.url})(?:${RE.w})\\)`,
-    token: TOKEN_TYPE.URI
+    token: 'URI',
   },
   {
     re: RE.baduri,
-    token: TOKEN_TYPE.BAD_URI
+    token: 'BAD_URI',
   },
   {
     re: `(?:${RE.ident})\\(`,
-    token: TOKEN_TYPE.FUNCTION
+    token: 'FUNCTION',
   }
 ];
 

@@ -1,4 +1,3 @@
-import { TOKEN_TYPE } from '../enums/tokenType';
 import { setInput, getToken, peekNextNoWhiteSpaceToken } from '../tokenizer';
 import { makeStylesheetNode, makeRuleNode } from '../helper/node';
 
@@ -19,7 +18,7 @@ export function stylesheet(): STYLESHEET_NODE {
   const rootNode: STYLESHEET_NODE = makeStylesheetNode();
 
   eatWhiteSpace();
-  while (test([TOKEN_TYPE.IDENT, TOKEN_TYPE.HASH, TOKEN_TYPE.DOT, TOKEN_TYPE.LEFT_SQUARE_BRACE, TOKEN_TYPE.COLON])) {
+  while (test(['IDENT', 'HASH', 'DOT', 'LEFT_SQUARE_BRACE', 'COLON'])) {
     rootNode.children.push(rule());
     eatWhiteSpace();
   }
@@ -30,18 +29,18 @@ export function rule(): RULE_NODE {
   const ruleNode: RULE_NODE = makeRuleNode();
 
   ruleNode.selectors = selectors();
-  match(TOKEN_TYPE.LEFT_CURLY_BRACE);
+  match('LEFT_CURLY_BRACE');
   eatWhiteSpace();
-  while (test([TOKEN_TYPE.AMPERSAND, TOKEN_TYPE.CARET, TOKEN_TYPE.IDENT, TOKEN_TYPE.SEMICOLON, TOKEN_TYPE.DOT, TOKEN_TYPE.HASH, TOKEN_TYPE.LEFT_SQUARE_BRACE, TOKEN_TYPE.COLON])) {
+  while (test(['AMPERSAND', 'CARET', 'IDENT', 'SEMICOLON', 'DOT', 'HASH', 'LEFT_SQUARE_BRACE', 'COLON'])) {
     const nextToken = peekNextNoWhiteSpaceToken();
 
-    if ((test(TOKEN_TYPE.IDENT) && nextToken && nextToken.type === TOKEN_TYPE.COLON) || test(TOKEN_TYPE.SEMICOLON)) {
+    if ((test('IDENT') && nextToken && nextToken.type === 'COLON') || test('SEMICOLON')) {
       ruleNode.declarations = ruleNode.declarations.concat(declarations());
     } else {
       ruleNode.children.push(rule());
     }
   }
-  match(TOKEN_TYPE.RIGHT_CURLY_BRACE);
+  match('RIGHT_CURLY_BRACE');
   eatWhiteSpace();
   return ruleNode;
 }
@@ -50,8 +49,8 @@ export function selectors(): string[] {
   let rtn: string[] = [];
 
   rtn.push(selector());
-  while (test(TOKEN_TYPE.COMMA)) {
-    match(TOKEN_TYPE.COMMA);
+  while (test('COMMA')) {
+    match('COMMA');
     eatWhiteSpace();
     rtn.push(selector());
   }
@@ -62,13 +61,13 @@ export function selector(): string {
   let rtn: string;
 
   rtn = simpleSelector();
-  if (test([TOKEN_TYPE.PLUS, TOKEN_TYPE.GREATER_THAN])) {
+  if (test(['PLUS', 'GREATER_THAN'])) {
     rtn += combinator();
     rtn += selector();
-  } else if (test(TOKEN_TYPE.S)) {
-    match(TOKEN_TYPE.S);
-    if (test([TOKEN_TYPE.PLUS, TOKEN_TYPE.GREATER_THAN, TOKEN_TYPE.AMPERSAND, TOKEN_TYPE.CARET, TOKEN_TYPE.IDENT, TOKEN_TYPE.ASTERISK, TOKEN_TYPE.HASH, TOKEN_TYPE.DOT, TOKEN_TYPE.LEFT_SQUARE_BRACE, TOKEN_TYPE.COLON])) {
-      if (test([TOKEN_TYPE.PLUS, TOKEN_TYPE.GREATER_THAN])) {
+  } else if (test('S')) {
+    match('S');
+    if (test(['PLUS', 'GREATER_THAN', 'AMPERSAND', 'CARET', 'IDENT', 'ASTERISK', 'HASH', 'DOT', 'LEFT_SQUARE_BRACE', 'COLON'])) {
+      if (test(['PLUS', 'GREATER_THAN'])) {
         rtn += ' ';
         rtn += combinator();
       }
@@ -82,21 +81,21 @@ export function selector(): string {
 export function simpleSelector(): string {
   let rtn: string;
 
-  if (test([TOKEN_TYPE.AMPERSAND, TOKEN_TYPE.CARET, TOKEN_TYPE.IDENT, TOKEN_TYPE.ASTERISK])) {
+  if (test(['AMPERSAND', 'CARET', 'IDENT', 'ASTERISK'])) {
     rtn = elementName();
-    while (test([TOKEN_TYPE.HASH, TOKEN_TYPE.DOT, TOKEN_TYPE.LEFT_SQUARE_BRACE, TOKEN_TYPE.COLON])) {
+    while (test(['HASH', 'DOT', 'LEFT_SQUARE_BRACE', 'COLON'])) {
       switch (token.type) {
-        case TOKEN_TYPE.HASH:
+        case 'HASH':
           rtn += token.value;
-          match(TOKEN_TYPE.HASH);
+          match('HASH');
           break;
-        case TOKEN_TYPE.DOT:
+        case 'DOT':
           rtn += klass();
           break;
-        case TOKEN_TYPE.LEFT_SQUARE_BRACE:
+        case 'LEFT_SQUARE_BRACE':
           rtn += attrib();
           break;
-        case TOKEN_TYPE.COLON:
+        case 'COLON':
           rtn += pseudo();
           break;
         default:
@@ -106,22 +105,22 @@ export function simpleSelector(): string {
     rtn = '';
     do {
       switch (token.type) {
-        case TOKEN_TYPE.HASH:
+        case 'HASH':
           rtn += token.value;
-          match(TOKEN_TYPE.HASH);
+          match('HASH');
           break;
-        case TOKEN_TYPE.DOT:
+        case 'DOT':
           rtn += klass();
           break;
-        case TOKEN_TYPE.LEFT_SQUARE_BRACE:
+        case 'LEFT_SQUARE_BRACE':
           rtn += attrib();
           break;
-        case TOKEN_TYPE.COLON:
+        case 'COLON':
           rtn += pseudo();
           break;
         default:
       }
-    } while (test([TOKEN_TYPE.HASH, TOKEN_TYPE.DOT, TOKEN_TYPE.LEFT_SQUARE_BRACE, TOKEN_TYPE.COLON]));
+    } while (test(['HASH', 'DOT', 'LEFT_SQUARE_BRACE', 'COLON']));
   }
   return rtn;
 }
@@ -130,14 +129,14 @@ export function elementName(): string {
   let rtn: string;
 
   rtn = token.value;
-  if (test(TOKEN_TYPE.AMPERSAND)) {
-    match(TOKEN_TYPE.AMPERSAND);
-  } else if (test(TOKEN_TYPE.CARET)) {
-    match(TOKEN_TYPE.CARET);
-  } else if (test(TOKEN_TYPE.IDENT)) {
-    match(TOKEN_TYPE.IDENT);
-  } else if (test(TOKEN_TYPE.ASTERISK)) {
-    match(TOKEN_TYPE.ASTERISK);
+  if (test('AMPERSAND')) {
+    match('AMPERSAND');
+  } else if (test('CARET')) {
+    match('CARET');
+  } else if (test('IDENT')) {
+    match('IDENT');
+  } else if (test('ASTERISK')) {
+    match('ASTERISK');
   } else {
     error();
   }
@@ -148,9 +147,9 @@ export function klass(): string {
   let rtn: string;
 
   rtn = '.';
-  match(TOKEN_TYPE.DOT);
+  match('DOT');
   rtn += token.value;
-  match(TOKEN_TYPE.IDENT);
+  match('IDENT');
   return rtn;
 }
 
@@ -158,25 +157,25 @@ export function attrib(): string {
   let rtn: string = '';
 
   rtn += '[';
-  match(TOKEN_TYPE.LEFT_SQUARE_BRACE);
+  match('LEFT_SQUARE_BRACE');
   eatWhiteSpace();
   rtn += token.value;
-  match(TOKEN_TYPE.IDENT);
+  match('IDENT');
   eatWhiteSpace();
-  if (test([TOKEN_TYPE.EQUAL, TOKEN_TYPE.INCLUDES, TOKEN_TYPE.DASHMATCH, TOKEN_TYPE.S, TOKEN_TYPE.IDENT, TOKEN_TYPE.STRING])) {
-    if (test([TOKEN_TYPE.EQUAL, TOKEN_TYPE.INCLUDES, TOKEN_TYPE.DASHMATCH])) {
+  if (test(['EQUAL', 'INCLUDES', 'DASHMATCH', 'S', 'IDENT', 'STRING'])) {
+    if (test(['EQUAL', 'INCLUDES', 'DASHMATCH'])) {
       rtn += token.value;
       match(token.type);
     }
     eatWhiteSpace();
-    if (test([TOKEN_TYPE.IDENT, TOKEN_TYPE.STRING])) {
+    if (test(['IDENT', 'STRING'])) {
       rtn += token.value;
       match(token.type);
     }
     eatWhiteSpace();
   }
   rtn += ']';
-  match(TOKEN_TYPE.RIGHT_SQUARE_BRACE);
+  match('RIGHT_SQUARE_BRACE');
   return rtn;
 }
 
@@ -184,26 +183,26 @@ export function pseudo(): string {
   let rtn: string;
 
   rtn = ':';
-  match(TOKEN_TYPE.COLON);
+  match('COLON');
 
   const type = token.type; // depressed ts error
 
   switch (type) {
-    case TOKEN_TYPE.IDENT:
+    case 'IDENT':
       rtn += token.value;
-      match(TOKEN_TYPE.IDENT);
+      match('IDENT');
       break;
-    case TOKEN_TYPE.FUNCTION:
+    case 'FUNCTION':
       rtn += token.value;
-      match(TOKEN_TYPE.FUNCTION);
+      match('FUNCTION');
       eatWhiteSpace();
-      if (token.type === TOKEN_TYPE.IDENT) {
+      if (token.type === 'IDENT') {
         rtn += ' ';
         rtn += token.value;
         eatWhiteSpace();
       }
       rtn += ')';
-      match(TOKEN_TYPE.RIGHT_BRACE);
+      match('RIGHT_BRACE');
       break;
     default:
       error();
@@ -215,15 +214,15 @@ export function pseudo(): string {
 export function declarations(): DECLARATION[] {
   const rtn: DECLARATION[] = [];
 
-  if (test(TOKEN_TYPE.IDENT)) {
+  if (test('IDENT')) {
     rtn.push(declaration());
   }
-  while (test(TOKEN_TYPE.SEMICOLON)) {
-    match(TOKEN_TYPE.SEMICOLON)
+  while (test('SEMICOLON')) {
+    match('SEMICOLON')
     eatWhiteSpace();
     const nextToken = peekNextNoWhiteSpaceToken();
 
-    if (test(TOKEN_TYPE.IDENT) && nextToken && nextToken.type === TOKEN_TYPE.COLON) {
+    if (test('IDENT') && nextToken && nextToken.type === 'COLON') {
       rtn.push(declaration());
     }
   }
@@ -234,12 +233,12 @@ export function declaration(): DECLARATION {
   const rtn: DECLARATION = ['', ''];
 
   rtn[0] = property();
-  match(TOKEN_TYPE.COLON);
+  match('COLON');
   eatWhiteSpace();
   rtn[1] = expr();
-  if (token.type === TOKEN_TYPE.IMPORTANT_SYM) {
+  if (token.type === 'IMPORTANT_SYM') {
     rtn[1] += ' !important';
-    match(TOKEN_TYPE.IMPORTANT_SYM);
+    match('IMPORTANT_SYM');
   }
   return rtn;
 }
@@ -248,7 +247,7 @@ export function prio(): string {
   let rtn: string;
 
   rtn = token.value;
-  match(TOKEN_TYPE.IMPORTANT_SYM);
+  match('IMPORTANT_SYM');
   eatWhiteSpace();
   return rtn;
 }
@@ -257,11 +256,11 @@ export function operator(): string {
   const rtn: string = token.value;
 
   switch (token.type) {
-    case TOKEN_TYPE.REVERSE_SOLIDUS:
-      match(TOKEN_TYPE.REVERSE_SOLIDUS);
+    case 'REVERSE_SOLIDUS':
+      match('REVERSE_SOLIDUS');
       break;
-    case TOKEN_TYPE.COMMA:
-      match(TOKEN_TYPE.COMMA);
+    case 'COMMA':
+      match('COMMA');
       break;
     default:
       error();
@@ -274,11 +273,11 @@ export function combinator(): string {
   const rtn: string = token.value;
 
   switch (token.type) {
-    case TOKEN_TYPE.PLUS:
-      match(TOKEN_TYPE.PLUS);
+    case 'PLUS':
+      match('PLUS');
       break;
-    case TOKEN_TYPE.GREATER_THAN:
-      match(TOKEN_TYPE.GREATER_THAN);
+    case 'GREATER_THAN':
+      match('GREATER_THAN');
       break;
     default:
       error();
@@ -291,11 +290,11 @@ export function unaryOperator(): string {
   const rtn: string = token.value;
 
   switch (token.type) {
-    case TOKEN_TYPE.PLUS:
-      match(TOKEN_TYPE.PLUS);
+    case 'PLUS':
+      match('PLUS');
       break;
-    case TOKEN_TYPE.MINUS:
-      match(TOKEN_TYPE.MINUS);
+    case 'MINUS':
+      match('MINUS');
       break;
     default:
       error();
@@ -306,7 +305,7 @@ export function unaryOperator(): string {
 export function property(): string {
   const rtn: string = token.value;
 
-  match(TOKEN_TYPE.IDENT);
+  match('IDENT');
   eatWhiteSpace();
   return rtn;
 }
@@ -314,8 +313,8 @@ export function property(): string {
 export function expr(): string {
   let rtn: string = term();
 
-  while (test([TOKEN_TYPE.REVERSE_SOLIDUS, TOKEN_TYPE.COMMA, TOKEN_TYPE.PLUS, TOKEN_TYPE.MINUS, TOKEN_TYPE.NUMBER, TOKEN_TYPE.PERCENTAGE, TOKEN_TYPE.LENGTH, TOKEN_TYPE.EMS, TOKEN_TYPE.EXS, TOKEN_TYPE.ANGLE, TOKEN_TYPE.TIME, TOKEN_TYPE.FREQ, TOKEN_TYPE.STRING, TOKEN_TYPE.IDENT, TOKEN_TYPE.URI, TOKEN_TYPE.HASH, TOKEN_TYPE.FUNCTION])) {
-    if (test([TOKEN_TYPE.REVERSE_SOLIDUS, TOKEN_TYPE.COMMA])) {
+  while (test(['REVERSE_SOLIDUS', 'COMMA', 'PLUS', 'MINUS', 'NUMBER', 'PERCENTAGE', 'LENGTH', 'EMS', 'EXS', 'ANGLE', 'TIME', 'FREQ', 'STRING', 'IDENT', 'URI', 'HASH', 'FUNCTION'])) {
+    if (test(['REVERSE_SOLIDUS', 'COMMA'])) {
       rtn += operator();
     } else {
       rtn += rtn ? ' ' : rtn;
@@ -328,20 +327,20 @@ export function expr(): string {
 export function term(): string {
   let rtn: string = '';
 
-  if (test([TOKEN_TYPE.PLUS, TOKEN_TYPE.MINUS])) {
+  if (test(['PLUS', 'MINUS'])) {
     rtn += unaryOperator();
   }
-  if (test([TOKEN_TYPE.NUMBER, TOKEN_TYPE.PERCENTAGE, TOKEN_TYPE.LENGTH, TOKEN_TYPE.EMS, TOKEN_TYPE.EXS, TOKEN_TYPE.ANGLE, TOKEN_TYPE.TIME, TOKEN_TYPE.FREQ])) {
+  if (test(['NUMBER', 'PERCENTAGE', 'LENGTH', 'EMS', 'EXS', 'ANGLE', 'TIME', 'FREQ'])) {
     rtn += token.value;
     match(token.type);
     eatWhiteSpace();
-  } else if (test([TOKEN_TYPE.STRING, TOKEN_TYPE.IDENT, TOKEN_TYPE.URI])) {
+  } else if (test(['STRING', 'IDENT', 'URI'])) {
     rtn += token.value
     match(token.type);
     eatWhiteSpace();
-  } else if (test(TOKEN_TYPE.HASH)) {
+  } else if (test('HASH')) {
     rtn += hexColor();
-  } else if (test(TOKEN_TYPE.FUNCTION)) {
+  } else if (test('FUNCTION')) {
     rtn += func();
   } else {
     error();
@@ -353,11 +352,11 @@ export function func(): string {
   let rtn: string;
 
   rtn = token.value;
-  match(TOKEN_TYPE.FUNCTION);
+  match('FUNCTION');
   eatWhiteSpace();
   rtn += expr();
   rtn += ')';
-  match(TOKEN_TYPE.RIGHT_BRACE);
+  match('RIGHT_BRACE');
   eatWhiteSpace();
   return rtn;
 }
@@ -365,7 +364,7 @@ export function func(): string {
 export function hexColor(): string {
   const rtn: string = token.value;
 
-  match(TOKEN_TYPE.HASH);
+  match('HASH');
   eatWhiteSpace();
   return rtn;
 }
@@ -374,7 +373,7 @@ export function hexColor(): string {
 // ====
 
 export function eatWhiteSpace() {
-  while (token && test(TOKEN_TYPE.S)) {
+  while (token && test('S')) {
     next();
   }
 }

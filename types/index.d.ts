@@ -1,4 +1,48 @@
-import { TOKEN_TYPE } from '../src/enums/tokenType';
+declare type TOKEN_TYPE =
+  'S' |
+  'COMMENTS' |
+  'BAD_COMMENTS' |
+  'INCLUDES' |
+  'DASHMATCH' |
+  'STRING' |
+  'BAD_STRING' |
+  'IDENT' |
+  'HASH' |
+  'IMPORTANT_SYM' |
+  'EMS' |
+  'EXS' |
+  'LENGTH' |
+  'ANGLE' |
+  'TIME' |
+  'FREQ' |
+  'DIMENSION' |
+  'PERCENTAGE' |
+  'NUMBER' |
+  'URI' |
+  'BAD_URI' |
+  'FUNCTION' |
+
+  // marks
+  'COLON' |
+  'SEMICOLON' |
+  'COMMA' |
+  'LEFT_BRACE' |
+  'RIGHT_BRACE' |
+  'LEFT_CURLY_BRACE' |
+  'RIGHT_CURLY_BRACE' |
+  'LEFT_SQUARE_BRACE' |
+  'RIGHT_SQUARE_BRACE' |
+  'PLUS' |
+  'MINUS' |
+  'GREATER_THAN' |
+  'LESS_THAN' |
+  'EQUAL' |
+  'DOT' |
+  'ASTERISK' |
+  'REVERSE_SOLIDUS' |
+  'AMPERSAND' |
+  'CARET' |
+  'UNKNOWN';
 
 declare interface TOKEN {
   type: TOKEN_TYPE;

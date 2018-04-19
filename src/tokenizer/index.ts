@@ -1,6 +1,5 @@
 import Lexer from 'lex';
 import rules from './rules';
-import { TOKEN_TYPE } from '../enums/tokenType';
 
 let index: number = 0;
 let row: number = 1;
@@ -25,26 +24,26 @@ rules.forEach((rule) => {
 });
 
 lexer.addRule(/./, (yytext: string) => {
-  let tokenType = TOKEN_TYPE.UNKNOWN;
+  let tokenType: TOKEN_TYPE = 'UNKNOWN';
 
   switch (yytext) {
-    case ':': tokenType = TOKEN_TYPE.COLON; break;
-    case ';': tokenType = TOKEN_TYPE.SEMICOLON; break;
-    case ',': tokenType = TOKEN_TYPE.COMMA; break;
-    case '(': tokenType = TOKEN_TYPE.LEFT_BRACE; break;
-    case ')': tokenType = TOKEN_TYPE.RIGHT_BRACE; break;
-    case '[': tokenType = TOKEN_TYPE.LEFT_SQUARE_BRACE; break;
-    case ']': tokenType = TOKEN_TYPE.RIGHT_SQUARE_BRACE; break;
-    case '{': tokenType = TOKEN_TYPE.LEFT_CURLY_BRACE; break;
-    case '}': tokenType = TOKEN_TYPE.RIGHT_CURLY_BRACE; break;
-    case '+': tokenType = TOKEN_TYPE.PLUS; break;
-    case '-': tokenType = TOKEN_TYPE.MINUS; break;
-    case '>': tokenType = TOKEN_TYPE.GREATER_THAN; break;
-    case '<': tokenType = TOKEN_TYPE.LESS_THAN; break;
-    case '=': tokenType = TOKEN_TYPE.EQUAL; break;
-    case '.': tokenType = TOKEN_TYPE.DOT; break;
-    case '*': tokenType = TOKEN_TYPE.ASTERISK; break;
-    case '/': tokenType = TOKEN_TYPE.REVERSE_SOLIDUS; break;
+    case ':': tokenType = 'COLON'; break;
+    case ';': tokenType = 'SEMICOLON'; break;
+    case ',': tokenType = 'COMMA'; break;
+    case '(': tokenType = 'LEFT_BRACE'; break;
+    case ')': tokenType = 'RIGHT_BRACE'; break;
+    case '[': tokenType = 'LEFT_SQUARE_BRACE'; break;
+    case ']': tokenType = 'RIGHT_SQUARE_BRACE'; break;
+    case '{': tokenType = 'LEFT_CURLY_BRACE'; break;
+    case '}': tokenType = 'RIGHT_CURLY_BRACE'; break;
+    case '+': tokenType = 'PLUS'; break;
+    case '-': tokenType = 'MINUS'; break;
+    case '>': tokenType = 'GREATER_THAN'; break;
+    case '<': tokenType = 'LESS_THAN'; break;
+    case '=': tokenType = 'EQUAL'; break;
+    case '.': tokenType = 'DOT'; break;
+    case '*': tokenType = 'ASTERISK'; break;
+    case '/': tokenType = 'REVERSE_SOLIDUS'; break;
     default:;
   }
 
@@ -78,7 +77,7 @@ export function peekNextNoWhiteSpaceToken(): void | TOKEN {
   let step = 1;
   let nextToken = peekToken(step);
 
-  while (nextToken && nextToken.type === TOKEN_TYPE.S) {
+  while (nextToken && nextToken.type === 'S') {
     nextToken = peekToken(++step);
   }
   return nextToken;
