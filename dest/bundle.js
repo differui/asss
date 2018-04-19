@@ -202,189 +202,142 @@ var T = 't|\\\\0{0,4}(54|74)(\\r\\n|[ \\t\\r\\n\\f])?|\\\\t';
 var X = 'x|\\\\0{0,4}(58|78)(\\r\\n|[ \\t\\r\\n\\f])?|\\\\x';
 var Z = 'z|\\\\0{0,4}(5a|7a)(\\r\\n|[ \\t\\r\\n\\f])?|\\\\z';
 
-var TOKEN_TYPE;
-(function (TOKEN_TYPE) {
-    TOKEN_TYPE[TOKEN_TYPE["S"] = 'S'] = "S";
-    TOKEN_TYPE[TOKEN_TYPE["COMMENTS"] = 'COMMENTS'] = "COMMENTS";
-    TOKEN_TYPE[TOKEN_TYPE["BAD_COMMENTS"] = 'BAD_COMMENTS'] = "BAD_COMMENTS";
-    TOKEN_TYPE[TOKEN_TYPE["INCLUDES"] = 'INCLUDES'] = "INCLUDES";
-    TOKEN_TYPE[TOKEN_TYPE["DASHMATCH"] = 'DASHMATCH'] = "DASHMATCH";
-    TOKEN_TYPE[TOKEN_TYPE["STRING"] = 'STRING'] = "STRING";
-    TOKEN_TYPE[TOKEN_TYPE["BAD_STRING"] = 'BAD_STRING'] = "BAD_STRING";
-    TOKEN_TYPE[TOKEN_TYPE["IDENT"] = 'IDENT'] = "IDENT";
-    TOKEN_TYPE[TOKEN_TYPE["HASH"] = 'HASH'] = "HASH";
-    TOKEN_TYPE[TOKEN_TYPE["IMPORTANT_SYM"] = 'IMPORTANT_SYM'] = "IMPORTANT_SYM";
-    TOKEN_TYPE[TOKEN_TYPE["EMS"] = 'EMS'] = "EMS";
-    TOKEN_TYPE[TOKEN_TYPE["EXS"] = 'EXS'] = "EXS";
-    TOKEN_TYPE[TOKEN_TYPE["LENGTH"] = 'LENGTH'] = "LENGTH";
-    TOKEN_TYPE[TOKEN_TYPE["ANGLE"] = 'ANGLE'] = "ANGLE";
-    TOKEN_TYPE[TOKEN_TYPE["TIME"] = 'TIME'] = "TIME";
-    TOKEN_TYPE[TOKEN_TYPE["FREQ"] = 'FREQ'] = "FREQ";
-    TOKEN_TYPE[TOKEN_TYPE["DIMENSION"] = 'DIMENSION'] = "DIMENSION";
-    TOKEN_TYPE[TOKEN_TYPE["PERCENTAGE"] = 'PERCENTAGE'] = "PERCENTAGE";
-    TOKEN_TYPE[TOKEN_TYPE["NUMBER"] = 'NUMBER'] = "NUMBER";
-    TOKEN_TYPE[TOKEN_TYPE["URI"] = 'URI'] = "URI";
-    TOKEN_TYPE[TOKEN_TYPE["BAD_URI"] = 'BAD_URI'] = "BAD_URI";
-    TOKEN_TYPE[TOKEN_TYPE["FUNCTION"] = 'FUNCTION'] = "FUNCTION";
-    // marks
-    TOKEN_TYPE[TOKEN_TYPE["COLON"] = 'COLON'] = "COLON";
-    TOKEN_TYPE[TOKEN_TYPE["SEMICOLON"] = 'SEMICOLON'] = "SEMICOLON";
-    TOKEN_TYPE[TOKEN_TYPE["COMMA"] = 'COMMA'] = "COMMA";
-    TOKEN_TYPE[TOKEN_TYPE["LEFT_BRACE"] = 'LEFT_BRACE'] = "LEFT_BRACE";
-    TOKEN_TYPE[TOKEN_TYPE["RIGHT_BRACE"] = 'RIGHT_BRACE'] = "RIGHT_BRACE";
-    TOKEN_TYPE[TOKEN_TYPE["LEFT_CURLY_BRACE"] = 'LEFT_CURLY_BRACE'] = "LEFT_CURLY_BRACE";
-    TOKEN_TYPE[TOKEN_TYPE["RIGHT_CURLY_BRACE"] = 'RIGHT_CURLY_BRACE'] = "RIGHT_CURLY_BRACE";
-    TOKEN_TYPE[TOKEN_TYPE["LEFT_SQUARE_BRACE"] = 'LEFT_SQUARE_BRACE'] = "LEFT_SQUARE_BRACE";
-    TOKEN_TYPE[TOKEN_TYPE["RIGHT_SQUARE_BRACE"] = 'RIGHT_SQUARE_BRACE'] = "RIGHT_SQUARE_BRACE";
-    TOKEN_TYPE[TOKEN_TYPE["PLUS"] = 'PLUS'] = "PLUS";
-    TOKEN_TYPE[TOKEN_TYPE["MINUS"] = 'MINUS'] = "MINUS";
-    TOKEN_TYPE[TOKEN_TYPE["GREATER_THAN"] = 'GREATER_THAN'] = "GREATER_THAN";
-    TOKEN_TYPE[TOKEN_TYPE["LESS_THAN"] = 'LESS_THAN'] = "LESS_THAN";
-    TOKEN_TYPE[TOKEN_TYPE["EQUAL"] = 'EQUAL'] = "EQUAL";
-    TOKEN_TYPE[TOKEN_TYPE["DOT"] = 'DOT'] = "DOT";
-    TOKEN_TYPE[TOKEN_TYPE["ASTERISK"] = 'ASTERISK'] = "ASTERISK";
-    TOKEN_TYPE[TOKEN_TYPE["REVERSE_SOLIDUS"] = 'REVERSE_SOLIDUS'] = "REVERSE_SOLIDUS";
-    TOKEN_TYPE[TOKEN_TYPE["AMPERSAND"] = 'AMPERSAND'] = "AMPERSAND";
-    TOKEN_TYPE[TOKEN_TYPE["CARET"] = 'CARET'] = "CARET";
-    TOKEN_TYPE[TOKEN_TYPE["UNKNOWN"] = 'UNKNOWN'] = "UNKNOWN";
-})(TOKEN_TYPE || (TOKEN_TYPE = {}));
-
 var rules = [
     {
         re: s,
-        token: TOKEN_TYPE.S
+        token: 'S',
     },
     {
         re: '\\/\\*[^*]*\\*+([^/*][^*]*\\*+)*\\/',
-        token: TOKEN_TYPE.COMMENTS
+        token: 'COMMENTS',
     },
     {
         re: badcomment,
-        token: TOKEN_TYPE.BAD_COMMENTS
+        token: 'BAD_COMMENTS',
     },
     {
         re: '~=',
-        token: TOKEN_TYPE.INCLUDES
+        token: 'INCLUDES',
     },
     {
         re: '\\|=',
-        token: TOKEN_TYPE.DASHMATCH
+        token: 'DASHMATCH',
     },
     {
         re: string,
-        token: TOKEN_TYPE.STRING
+        token: 'STRING',
     },
     {
         re: badstring,
-        token: TOKEN_TYPE.BAD_STRING
+        token: 'BAD_STRING',
     },
     {
         re: ident,
-        token: TOKEN_TYPE.IDENT
+        token: 'IDENT',
     },
     {
         re: "#(?:" + name + ")",
-        token: TOKEN_TYPE.HASH
+        token: 'HASH',
     },
     {
         re: "&(?:" + name + ")?",
-        token: TOKEN_TYPE.AMPERSAND
+        token: 'AMPERSAND',
     },
     {
         re: "\\^(?:" + name + ")?",
-        token: TOKEN_TYPE.CARET
+        token: 'CARET',
     },
     {
         re: "!((?:" + w + ")|(?:" + comment + "))*(?:" + I + ")(?:" + M + ")(?:" + P + ")(?:" + O + ")(?:" + R + ")(?:" + T + ")(?:" + A + ")(?:" + N + ")(?:" + T + ")",
-        token: TOKEN_TYPE.IMPORTANT_SYM
+        token: 'IMPORTANT_SYM',
     },
     {
         re: "(?:" + num + ")(?:" + E + ")(?:" + M + ")",
-        token: TOKEN_TYPE.EMS
+        token: 'EMS',
     },
     {
         re: "(?:" + num + ")(?:" + E + ")(?:" + X + ")",
-        token: TOKEN_TYPE.EXS
+        token: 'EXS',
     },
     {
         re: "(?:" + num + ")(?:" + P + ")(?:" + X + ")",
-        token: TOKEN_TYPE.LENGTH
+        token: 'LENGTH',
     },
     {
         re: "(?:" + num + ")(?:" + C + ")(?:" + M + ")",
-        token: TOKEN_TYPE.LENGTH
+        token: 'LENGTH',
     },
     {
         re: "(?:" + num + ")(?:" + M + ")(?:" + M + ")",
-        token: TOKEN_TYPE.LENGTH
+        token: 'LENGTH',
     },
     {
         re: "(?:" + num + ")(?:" + I + ")(?:" + N + ")",
-        token: TOKEN_TYPE.LENGTH
+        token: 'LENGTH',
     },
     {
         re: "(?:" + num + ")(?:" + P + ")(?:" + T + ")",
-        token: TOKEN_TYPE.LENGTH
+        token: 'LENGTH',
     },
     {
         re: "(?:" + num + ")(?:" + P + ")(?:" + C + ")",
-        token: TOKEN_TYPE.LENGTH
+        token: 'LENGTH',
     },
     {
         re: "(?:" + D + ")(?:" + E + ")(?:" + G + ")",
-        token: TOKEN_TYPE.ANGLE
+        token: 'ANGLE',
     },
     {
         re: "(?:" + R + ")(?:" + A + ")(?:" + D + ")",
-        token: TOKEN_TYPE.ANGLE
+        token: 'ANGLE',
     },
     {
         re: "(?:" + G + ")(?:" + R + ")(?:" + A + ")(?:" + D + ")",
-        token: TOKEN_TYPE.ANGLE
+        token: 'ANGLE',
     },
     {
         re: "(?:" + M + ")(?:" + S + ")",
-        token: TOKEN_TYPE.TIME
+        token: 'TIME',
     },
     {
         re: S,
-        token: TOKEN_TYPE.TIME
+        token: 'TIME',
     },
     {
         re: "(?:" + H + ")(?:" + Z + ")",
-        token: TOKEN_TYPE.FREQ
+        token: 'FREQ',
     },
     {
         re: "(?:" + K + ")(?:" + H + ")(?:" + Z + ")",
-        token: TOKEN_TYPE.FREQ
+        token: 'FREQ',
     },
     {
         re: "(?:" + num + ")(?:" + ident + ")",
-        token: TOKEN_TYPE.DIMENSION
+        token: 'DIMENSION',
     },
     {
         re: "(?:" + num + ")%",
-        token: TOKEN_TYPE.PERCENTAGE
+        token: 'PERCENTAGE',
     },
     {
         re: num,
-        token: TOKEN_TYPE.NUMBER
+        token: 'NUMBER',
     },
     {
         re: "url\\((?:" + w + ")(?:" + string + ")(?:" + w + ")\\)",
-        token: TOKEN_TYPE.URI
+        token: 'URI',
     },
     {
         re: "url\\((?:" + w + ")(?:" + url + ")(?:" + w + ")\\)",
-        token: TOKEN_TYPE.URI
+        token: 'URI',
     },
     {
         re: baduri,
-        token: TOKEN_TYPE.BAD_URI
+        token: 'BAD_URI',
     },
     {
         re: "(?:" + ident + ")\\(",
-        token: TOKEN_TYPE.FUNCTION
+        token: 'FUNCTION',
     }
 ];
 
@@ -400,65 +353,65 @@ rules.forEach(function (rule) {
         return function (yytext) {
             tokens.push({
                 type: r.token,
-                value: yytext
+                value: yytext,
             });
         };
     })(rule);
     lexer.addRule(new RegExp(rule.re, 'i'), createToken);
 });
 lexer.addRule(/./, function (yytext) {
-    var tokenType = TOKEN_TYPE.UNKNOWN;
+    var tokenType = 'UNKNOWN';
     switch (yytext) {
         case ':':
-            tokenType = TOKEN_TYPE.COLON;
+            tokenType = 'COLON';
             break;
         case ';':
-            tokenType = TOKEN_TYPE.SEMICOLON;
+            tokenType = 'SEMICOLON';
             break;
         case ',':
-            tokenType = TOKEN_TYPE.COMMA;
+            tokenType = 'COMMA';
             break;
         case '(':
-            tokenType = TOKEN_TYPE.LEFT_BRACE;
+            tokenType = 'LEFT_BRACE';
             break;
         case ')':
-            tokenType = TOKEN_TYPE.RIGHT_BRACE;
+            tokenType = 'RIGHT_BRACE';
             break;
         case '[':
-            tokenType = TOKEN_TYPE.LEFT_SQUARE_BRACE;
+            tokenType = 'LEFT_SQUARE_BRACE';
             break;
         case ']':
-            tokenType = TOKEN_TYPE.RIGHT_SQUARE_BRACE;
+            tokenType = 'RIGHT_SQUARE_BRACE';
             break;
         case '{':
-            tokenType = TOKEN_TYPE.LEFT_CURLY_BRACE;
+            tokenType = 'LEFT_CURLY_BRACE';
             break;
         case '}':
-            tokenType = TOKEN_TYPE.RIGHT_CURLY_BRACE;
+            tokenType = 'RIGHT_CURLY_BRACE';
             break;
         case '+':
-            tokenType = TOKEN_TYPE.PLUS;
+            tokenType = 'PLUS';
             break;
         case '-':
-            tokenType = TOKEN_TYPE.MINUS;
+            tokenType = 'MINUS';
             break;
         case '>':
-            tokenType = TOKEN_TYPE.GREATER_THAN;
+            tokenType = 'GREATER_THAN';
             break;
         case '<':
-            tokenType = TOKEN_TYPE.LESS_THAN;
+            tokenType = 'LESS_THAN';
             break;
         case '=':
-            tokenType = TOKEN_TYPE.EQUAL;
+            tokenType = 'EQUAL';
             break;
         case '.':
-            tokenType = TOKEN_TYPE.DOT;
+            tokenType = 'DOT';
             break;
         case '*':
-            tokenType = TOKEN_TYPE.ASTERISK;
+            tokenType = 'ASTERISK';
             break;
         case '/':
-            tokenType = TOKEN_TYPE.REVERSE_SOLIDUS;
+            tokenType = 'REVERSE_SOLIDUS';
             break;
         default: ;
     }
@@ -487,7 +440,7 @@ function peekToken(step) {
 function peekNextNoWhiteSpaceToken() {
     var step = 1;
     var nextToken = peekToken(step);
-    while (nextToken && nextToken.type === TOKEN_TYPE.S) {
+    while (nextToken && nextToken.type === 'S') {
         nextToken = peekToken(++step);
     }
     return nextToken;
@@ -495,7 +448,7 @@ function peekNextNoWhiteSpaceToken() {
 
 function makeStylesheetNode() {
     var stylesheetNode = {
-        children: []
+        children: [],
     };
     return stylesheetNode;
 }
@@ -503,7 +456,7 @@ function makeRuleNode() {
     var ruleNode = {
         selectors: [],
         declarations: [],
-        children: []
+        children: [],
     };
     return ruleNode;
 }
@@ -514,7 +467,7 @@ function parse(source) {
     token = getToken();
     if (token) {
         return {
-            ast: stylesheet()
+            ast: stylesheet(),
         };
     }
     return {};
@@ -522,7 +475,7 @@ function parse(source) {
 function stylesheet() {
     var rootNode = makeStylesheetNode();
     eatWhiteSpace();
-    while (test([TOKEN_TYPE.IDENT, TOKEN_TYPE.HASH, TOKEN_TYPE.DOT, TOKEN_TYPE.LEFT_SQUARE_BRACE, TOKEN_TYPE.COLON])) {
+    while (test(['IDENT', 'HASH', 'DOT', 'LEFT_SQUARE_BRACE', 'COLON'])) {
         rootNode.children.push(rule());
         eatWhiteSpace();
     }
@@ -531,26 +484,26 @@ function stylesheet() {
 function rule() {
     var ruleNode = makeRuleNode();
     ruleNode.selectors = selectors();
-    match(TOKEN_TYPE.LEFT_CURLY_BRACE);
+    match('LEFT_CURLY_BRACE');
     eatWhiteSpace();
-    while (test([TOKEN_TYPE.AMPERSAND, TOKEN_TYPE.CARET, TOKEN_TYPE.IDENT, TOKEN_TYPE.SEMICOLON, TOKEN_TYPE.DOT, TOKEN_TYPE.HASH, TOKEN_TYPE.LEFT_SQUARE_BRACE, TOKEN_TYPE.COLON])) {
+    while (test(['AMPERSAND', 'CARET', 'IDENT', 'SEMICOLON', 'DOT', 'HASH', 'LEFT_SQUARE_BRACE', 'COLON'])) {
         var nextToken = peekNextNoWhiteSpaceToken();
-        if ((test(TOKEN_TYPE.IDENT) && nextToken && nextToken.type === TOKEN_TYPE.COLON) || test(TOKEN_TYPE.SEMICOLON)) {
+        if ((test('IDENT') && nextToken && nextToken.type === 'COLON') || test('SEMICOLON')) {
             ruleNode.declarations = ruleNode.declarations.concat(declarations());
         }
         else {
             ruleNode.children.push(rule());
         }
     }
-    match(TOKEN_TYPE.RIGHT_CURLY_BRACE);
+    match('RIGHT_CURLY_BRACE');
     eatWhiteSpace();
     return ruleNode;
 }
 function selectors() {
     var rtn = [];
     rtn.push(selector());
-    while (test(TOKEN_TYPE.COMMA)) {
-        match(TOKEN_TYPE.COMMA);
+    while (test('COMMA')) {
+        match('COMMA');
         eatWhiteSpace();
         rtn.push(selector());
     }
@@ -559,14 +512,14 @@ function selectors() {
 function selector() {
     var rtn;
     rtn = simpleSelector();
-    if (test([TOKEN_TYPE.PLUS, TOKEN_TYPE.GREATER_THAN])) {
+    if (test(['PLUS', 'GREATER_THAN'])) {
         rtn += combinator();
         rtn += selector();
     }
-    else if (test(TOKEN_TYPE.S)) {
-        match(TOKEN_TYPE.S);
-        if (test([TOKEN_TYPE.PLUS, TOKEN_TYPE.GREATER_THAN, TOKEN_TYPE.AMPERSAND, TOKEN_TYPE.CARET, TOKEN_TYPE.IDENT, TOKEN_TYPE.ASTERISK, TOKEN_TYPE.HASH, TOKEN_TYPE.DOT, TOKEN_TYPE.LEFT_SQUARE_BRACE, TOKEN_TYPE.COLON])) {
-            if (test([TOKEN_TYPE.PLUS, TOKEN_TYPE.GREATER_THAN])) {
+    else if (test('S')) {
+        match('S');
+        if (test(['PLUS', 'GREATER_THAN', 'AMPERSAND', 'CARET', 'IDENT', 'ASTERISK', 'HASH', 'DOT', 'LEFT_SQUARE_BRACE', 'COLON'])) {
+            if (test(['PLUS', 'GREATER_THAN'])) {
                 rtn += ' ';
                 rtn += combinator();
             }
@@ -578,21 +531,21 @@ function selector() {
 }
 function simpleSelector() {
     var rtn;
-    if (test([TOKEN_TYPE.AMPERSAND, TOKEN_TYPE.CARET, TOKEN_TYPE.IDENT, TOKEN_TYPE.ASTERISK])) {
+    if (test(['AMPERSAND', 'CARET', 'IDENT', 'ASTERISK'])) {
         rtn = elementName();
-        while (test([TOKEN_TYPE.HASH, TOKEN_TYPE.DOT, TOKEN_TYPE.LEFT_SQUARE_BRACE, TOKEN_TYPE.COLON])) {
+        while (test(['HASH', 'DOT', 'LEFT_SQUARE_BRACE', 'COLON'])) {
             switch (token.type) {
-                case TOKEN_TYPE.HASH:
+                case 'HASH':
                     rtn += token.value;
-                    match(TOKEN_TYPE.HASH);
+                    match('HASH');
                     break;
-                case TOKEN_TYPE.DOT:
+                case 'DOT':
                     rtn += klass();
                     break;
-                case TOKEN_TYPE.LEFT_SQUARE_BRACE:
+                case 'LEFT_SQUARE_BRACE':
                     rtn += attrib();
                     break;
-                case TOKEN_TYPE.COLON:
+                case 'COLON':
                     rtn += pseudo();
                     break;
                 default:
@@ -603,39 +556,39 @@ function simpleSelector() {
         rtn = '';
         do {
             switch (token.type) {
-                case TOKEN_TYPE.HASH:
+                case 'HASH':
                     rtn += token.value;
-                    match(TOKEN_TYPE.HASH);
+                    match('HASH');
                     break;
-                case TOKEN_TYPE.DOT:
+                case 'DOT':
                     rtn += klass();
                     break;
-                case TOKEN_TYPE.LEFT_SQUARE_BRACE:
+                case 'LEFT_SQUARE_BRACE':
                     rtn += attrib();
                     break;
-                case TOKEN_TYPE.COLON:
+                case 'COLON':
                     rtn += pseudo();
                     break;
                 default:
             }
-        } while (test([TOKEN_TYPE.HASH, TOKEN_TYPE.DOT, TOKEN_TYPE.LEFT_SQUARE_BRACE, TOKEN_TYPE.COLON]));
+        } while (test(['HASH', 'DOT', 'LEFT_SQUARE_BRACE', 'COLON']));
     }
     return rtn;
 }
 function elementName() {
     var rtn;
     rtn = token.value;
-    if (test(TOKEN_TYPE.AMPERSAND)) {
-        match(TOKEN_TYPE.AMPERSAND);
+    if (test('AMPERSAND')) {
+        match('AMPERSAND');
     }
-    else if (test(TOKEN_TYPE.CARET)) {
-        match(TOKEN_TYPE.CARET);
+    else if (test('CARET')) {
+        match('CARET');
     }
-    else if (test(TOKEN_TYPE.IDENT)) {
-        match(TOKEN_TYPE.IDENT);
+    else if (test('IDENT')) {
+        match('IDENT');
     }
-    else if (test(TOKEN_TYPE.ASTERISK)) {
-        match(TOKEN_TYPE.ASTERISK);
+    else if (test('ASTERISK')) {
+        match('ASTERISK');
     }
     else {
         error();
@@ -645,56 +598,56 @@ function elementName() {
 function klass() {
     var rtn;
     rtn = '.';
-    match(TOKEN_TYPE.DOT);
+    match('DOT');
     rtn += token.value;
-    match(TOKEN_TYPE.IDENT);
+    match('IDENT');
     return rtn;
 }
 function attrib() {
     var rtn = '';
     rtn += '[';
-    match(TOKEN_TYPE.LEFT_SQUARE_BRACE);
+    match('LEFT_SQUARE_BRACE');
     eatWhiteSpace();
     rtn += token.value;
-    match(TOKEN_TYPE.IDENT);
+    match('IDENT');
     eatWhiteSpace();
-    if (test([TOKEN_TYPE.EQUAL, TOKEN_TYPE.INCLUDES, TOKEN_TYPE.DASHMATCH, TOKEN_TYPE.S, TOKEN_TYPE.IDENT, TOKEN_TYPE.STRING])) {
-        if (test([TOKEN_TYPE.EQUAL, TOKEN_TYPE.INCLUDES, TOKEN_TYPE.DASHMATCH])) {
+    if (test(['EQUAL', 'INCLUDES', 'DASHMATCH', 'S', 'IDENT', 'STRING'])) {
+        if (test(['EQUAL', 'INCLUDES', 'DASHMATCH'])) {
             rtn += token.value;
             match(token.type);
         }
         eatWhiteSpace();
-        if (test([TOKEN_TYPE.IDENT, TOKEN_TYPE.STRING])) {
+        if (test(['IDENT', 'STRING'])) {
             rtn += token.value;
             match(token.type);
         }
         eatWhiteSpace();
     }
     rtn += ']';
-    match(TOKEN_TYPE.RIGHT_SQUARE_BRACE);
+    match('RIGHT_SQUARE_BRACE');
     return rtn;
 }
 function pseudo() {
     var rtn;
     rtn = ':';
-    match(TOKEN_TYPE.COLON);
+    match('COLON');
     var type = token.type; // depressed ts error
     switch (type) {
-        case TOKEN_TYPE.IDENT:
+        case 'IDENT':
             rtn += token.value;
-            match(TOKEN_TYPE.IDENT);
+            match('IDENT');
             break;
-        case TOKEN_TYPE.FUNCTION:
+        case 'FUNCTION':
             rtn += token.value;
-            match(TOKEN_TYPE.FUNCTION);
+            match('FUNCTION');
             eatWhiteSpace();
-            if (token.type === TOKEN_TYPE.IDENT) {
+            if (token.type === 'IDENT') {
                 rtn += ' ';
                 rtn += token.value;
                 eatWhiteSpace();
             }
             rtn += ')';
-            match(TOKEN_TYPE.RIGHT_BRACE);
+            match('RIGHT_BRACE');
             break;
         default:
             error();
@@ -703,14 +656,14 @@ function pseudo() {
 }
 function declarations() {
     var rtn = [];
-    if (test(TOKEN_TYPE.IDENT)) {
+    if (test('IDENT')) {
         rtn.push(declaration());
     }
-    while (test(TOKEN_TYPE.SEMICOLON)) {
-        match(TOKEN_TYPE.SEMICOLON);
+    while (test('SEMICOLON')) {
+        match('SEMICOLON');
         eatWhiteSpace();
         var nextToken = peekNextNoWhiteSpaceToken();
-        if (test(TOKEN_TYPE.IDENT) && nextToken && nextToken.type === TOKEN_TYPE.COLON) {
+        if (test('IDENT') && nextToken && nextToken.type === 'COLON') {
             rtn.push(declaration());
         }
     }
@@ -719,12 +672,12 @@ function declarations() {
 function declaration() {
     var rtn = ['', ''];
     rtn[0] = property();
-    match(TOKEN_TYPE.COLON);
+    match('COLON');
     eatWhiteSpace();
     rtn[1] = expr();
-    if (token.type === TOKEN_TYPE.IMPORTANT_SYM) {
+    if (token.type === 'IMPORTANT_SYM') {
         rtn[1] += ' !important';
-        match(TOKEN_TYPE.IMPORTANT_SYM);
+        match('IMPORTANT_SYM');
     }
     return rtn;
 }
@@ -732,11 +685,11 @@ function declaration() {
 function operator() {
     var rtn = token.value;
     switch (token.type) {
-        case TOKEN_TYPE.REVERSE_SOLIDUS:
-            match(TOKEN_TYPE.REVERSE_SOLIDUS);
+        case 'REVERSE_SOLIDUS':
+            match('REVERSE_SOLIDUS');
             break;
-        case TOKEN_TYPE.COMMA:
-            match(TOKEN_TYPE.COMMA);
+        case 'COMMA':
+            match('COMMA');
             break;
         default:
             error();
@@ -747,11 +700,11 @@ function operator() {
 function combinator() {
     var rtn = token.value;
     switch (token.type) {
-        case TOKEN_TYPE.PLUS:
-            match(TOKEN_TYPE.PLUS);
+        case 'PLUS':
+            match('PLUS');
             break;
-        case TOKEN_TYPE.GREATER_THAN:
-            match(TOKEN_TYPE.GREATER_THAN);
+        case 'GREATER_THAN':
+            match('GREATER_THAN');
             break;
         default:
             error();
@@ -762,11 +715,11 @@ function combinator() {
 function unaryOperator() {
     var rtn = token.value;
     switch (token.type) {
-        case TOKEN_TYPE.PLUS:
-            match(TOKEN_TYPE.PLUS);
+        case 'PLUS':
+            match('PLUS');
             break;
-        case TOKEN_TYPE.MINUS:
-            match(TOKEN_TYPE.MINUS);
+        case 'MINUS':
+            match('MINUS');
             break;
         default:
             error();
@@ -775,14 +728,14 @@ function unaryOperator() {
 }
 function property() {
     var rtn = token.value;
-    match(TOKEN_TYPE.IDENT);
+    match('IDENT');
     eatWhiteSpace();
     return rtn;
 }
 function expr() {
     var rtn = term();
-    while (test([TOKEN_TYPE.REVERSE_SOLIDUS, TOKEN_TYPE.COMMA, TOKEN_TYPE.PLUS, TOKEN_TYPE.MINUS, TOKEN_TYPE.NUMBER, TOKEN_TYPE.PERCENTAGE, TOKEN_TYPE.LENGTH, TOKEN_TYPE.EMS, TOKEN_TYPE.EXS, TOKEN_TYPE.ANGLE, TOKEN_TYPE.TIME, TOKEN_TYPE.FREQ, TOKEN_TYPE.STRING, TOKEN_TYPE.IDENT, TOKEN_TYPE.URI, TOKEN_TYPE.HASH, TOKEN_TYPE.FUNCTION])) {
-        if (test([TOKEN_TYPE.REVERSE_SOLIDUS, TOKEN_TYPE.COMMA])) {
+    while (test(['REVERSE_SOLIDUS', 'COMMA', 'PLUS', 'MINUS', 'NUMBER', 'PERCENTAGE', 'LENGTH', 'EMS', 'EXS', 'ANGLE', 'TIME', 'FREQ', 'STRING', 'IDENT', 'URI', 'HASH', 'FUNCTION'])) {
+        if (test(['REVERSE_SOLIDUS', 'COMMA'])) {
             rtn += operator();
         }
         else {
@@ -794,23 +747,23 @@ function expr() {
 }
 function term() {
     var rtn = '';
-    if (test([TOKEN_TYPE.PLUS, TOKEN_TYPE.MINUS])) {
+    if (test(['PLUS', 'MINUS'])) {
         rtn += unaryOperator();
     }
-    if (test([TOKEN_TYPE.NUMBER, TOKEN_TYPE.PERCENTAGE, TOKEN_TYPE.LENGTH, TOKEN_TYPE.EMS, TOKEN_TYPE.EXS, TOKEN_TYPE.ANGLE, TOKEN_TYPE.TIME, TOKEN_TYPE.FREQ])) {
+    if (test(['NUMBER', 'PERCENTAGE', 'LENGTH', 'EMS', 'EXS', 'ANGLE', 'TIME', 'FREQ'])) {
         rtn += token.value;
         match(token.type);
         eatWhiteSpace();
     }
-    else if (test([TOKEN_TYPE.STRING, TOKEN_TYPE.IDENT, TOKEN_TYPE.URI])) {
+    else if (test(['STRING', 'IDENT', 'URI'])) {
         rtn += token.value;
         match(token.type);
         eatWhiteSpace();
     }
-    else if (test(TOKEN_TYPE.HASH)) {
+    else if (test('HASH')) {
         rtn += hexColor();
     }
-    else if (test(TOKEN_TYPE.FUNCTION)) {
+    else if (test('FUNCTION')) {
         rtn += func();
     }
     else {
@@ -821,24 +774,24 @@ function term() {
 function func() {
     var rtn;
     rtn = token.value;
-    match(TOKEN_TYPE.FUNCTION);
+    match('FUNCTION');
     eatWhiteSpace();
     rtn += expr();
     rtn += ')';
-    match(TOKEN_TYPE.RIGHT_BRACE);
+    match('RIGHT_BRACE');
     eatWhiteSpace();
     return rtn;
 }
 function hexColor() {
     var rtn = token.value;
-    match(TOKEN_TYPE.HASH);
+    match('HASH');
     eatWhiteSpace();
     return rtn;
 }
 // utils
 // ====
 function eatWhiteSpace() {
-    while (token && test(TOKEN_TYPE.S)) {
+    while (token && test('S')) {
         next();
     }
 }
@@ -965,10 +918,10 @@ function generateRule(node, indent) {
         var spaces_1 = new Array(indent + 1).join(' ');
         var declarations = node.declarations.map(function (_a) {
             var k = _a[0], v = _a[1];
-            return ("" + spaces_1 + k + ": " + v);
+            return "" + spaces_1 + k + ": " + v;
         }).join(';\n');
         return [
-            (node.selectors.join(',') + " {"),
+            node.selectors.join(',') + " {",
             declarations,
             '}'
         ].join('\n');
@@ -990,14 +943,14 @@ function tokenize(source) {
 function compile(source, opts) {
     if (opts.scan) {
         return {
-            tokens: tokenize(source)
+            tokens: tokenize(source),
         };
     }
     else if (opts.parse) {
         var ast = parse(source).ast;
         if (ast) {
             return {
-                ast
+                ast: ast,
             };
         }
     }
@@ -1005,7 +958,7 @@ function compile(source, opts) {
         var ast = parse(source).ast;
         if (ast) {
             return {
-                ast: transform(ast)
+                ast: transform(ast),
             };
         }
     }
@@ -1014,8 +967,8 @@ function compile(source, opts) {
         if (ast) {
             return {
                 code: generate(transform(ast), {
-                    indent: 2
-                })
+                    indent: 2,
+                }),
             };
         }
     }
